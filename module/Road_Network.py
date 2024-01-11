@@ -1,5 +1,5 @@
-from Node import Node;
-from Edge import Edge;
+from module.Node import Node
+from module.Edge import Edge
 
 class Road_Network:
     def __init__(self, name, nodes=0, edges=0):
@@ -13,8 +13,10 @@ class Road_Network:
     def add_edge(self, edge):
         self.edges.append(edge)
 
-    def find_node(self, nodeIndex):
-        return self.nodes.index(nodeIndex)
+    def find_node(self, nodeCode):
+        for node in self.nodes:
+            if node.code == nodeCode:
+                return node
 
     def find_edge(self, edgeIndex):
         return self.edges.index(edgeIndex)
