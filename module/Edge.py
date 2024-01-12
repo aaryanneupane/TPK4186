@@ -1,4 +1,5 @@
 import module.Node as nd
+
 class Edge:
     def __init__(self, code, edgeType = "uni", length = 0):
         self.code = code
@@ -7,6 +8,9 @@ class Edge:
         self.edgeType = edgeType
         self.length = length
 
+    def change_code(self, new_code):
+        self.code = new_code
+
     def change_length(self, length):
         self.length = length
 
@@ -14,7 +18,13 @@ class Edge:
         self.edgeType = edgeType
     
     def change_sourceNode(self, sourceNode):
+        if self.sourceNode:
+            self.sourceNode.delete_outEdge(self)
         self.sourceNode = sourceNode
+        sourceNode.add_outEdge(self)
     
     def change_targetNode(self, targetNode):
+        if self.targetNode:
+            self.targetNode.delete_inEdge(self)
         self.targetNode = targetNode
+        targetNode.add_inEdge(self)
