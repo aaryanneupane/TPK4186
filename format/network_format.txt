@@ -1,0 +1,37 @@
+Network_name=____ 
+
+Node_size=x
+Edge_size=y
+
+Node_codes: [Node_1, Node_2, ...., Node_n]
+Edge_codes: [Edge_1, Edge_2, ...., Edge_n]
+
+Edges:
+    Egde_1: 
+        sourceNode: [Node1, Node_2]
+        targetNode: [Node1, Node_2]
+        edgeType = 'uni' | 'bi'
+        length = z
+                    .
+                    .
+                    .
+    Egde_n: 
+        sourceNode: [Node1, ..., Node_n]
+        targetNode: [Node1, ..., Node_n]
+        edgeType = 'uni' | 'bi'
+        length = z
+
+Nodes:
+    Node_1: 
+        inEdges: [Edge1, ..., Edge_n]
+        outEdges: [Edge1, ..., Edge_n]
+        attributes: {key_1:value_1, ..., key_n:value_n}
+                    .
+                    .
+                    .
+    Node_n: 
+        inEdges: [Edge1,..., Edge_n]
+        outEdges: [Edge1,..., Edge_n]
+        attributes: {key_1:value_1, ..., key_n:value_n}
+
+

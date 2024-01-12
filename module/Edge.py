@@ -1,10 +1,9 @@
-from module.Node import Node
-
+import module.Node as nd
 class Edge:
-    def __init__(self, code, sourceNode = None | Node, targetNode = None | Node, edgeType = "uni", length = 0):
+    def __init__(self, code, edgeType = "uni", length = 0):
         self.code = code
-        self.sourceNode = sourceNode
-        self.targetNode = targetNode
+        self.sourceNode = None
+        self.targetNode = None
         self.edgeType = edgeType
         self.length = length
 

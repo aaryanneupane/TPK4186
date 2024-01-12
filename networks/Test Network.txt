@@ -1,0 +1,39 @@
+name: Test Network
+node_size: 3
+edge_size: 3
+
+node_codes: ['A', 'B', 'C']
+edge_codes: ['AB', 'AC', 'BC']
+
+edge_code: AB
+    source_node: A
+    target_node: B
+    edge_type: uni
+    length: 10
+
+edge_code: AC
+    source_node: A
+    target_node: C
+    edge_type: uni
+    length: 10
+
+edge_code: BC
+    source_node: B
+    target_node: C
+    edge_type: bi
+    length: 10
+
+node_code: A
+    in_edges: []
+    out_edges: ['AB', 'AC']
+    attributes: {}
+
+node_code: B
+    in_edges: ['AB', 'BC']
+    out_edges: ['BC']
+    attributes: {}
+
+node_code: C
+    in_edges: ['AC', 'BC']
+    out_edges: ['BC']
+    attributes: {}
