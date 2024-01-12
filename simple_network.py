@@ -5,7 +5,7 @@ simple_network = Road_Network("Test Network", 3, 3)
 
 # Defining the nodes
 A = simple_network.nodes[0]
-A.code = "A"
+A.change_code('A')
 
 B = simple_network.nodes[1]
 B.code = "B"
@@ -15,36 +15,36 @@ C.code = "C"
 
 # Defining the edges
 AB = simple_network.edges[0]
-AB.code = "AB"
-AB.sourceNode = A
-AB.targetNode = B
-AB.length = 10
+AB.change_code("AB")
+AB.change_sourceNode(A)
+AB.change_targetNode(B)
+AB.change_length(10)
 
 AC = simple_network.edges[1]
-AC.code = "AC"
-AC.sourceNode = A
-AC.targetNode = C
-AC.length = 10
+AC.change_code("AC")
+AC.change_sourceNode(A)
+AC.change_targetNode(C)
+AC.change_length(10)
 
 BC = simple_network.edges[2]
-BC.code = "BC"
-BC.sourceNode = B
-BC.targetNode = C
-BC.edgeType = "bi"
-BC.length = 10
+BC.change_code("BC")
+BC.change_sourceNode(B)
+BC.change_targetNode(C)
+BC.change_edgeType("bi")
+BC.change_length(10)
 
 # Update the inEdges and outEdges of the nodes
-A.outEdges.append(AB)
-A.outEdges.append(AC)
+A.add_outEdge(AB)
+A.add_outEdge(AC)
 
-B.inEdges.append(AB)
-B.inEdges.append(BC)
-B.outEdges.append(BC)
+B.add_inEdge(AB)
+B.add_inEdge(BC)
+B.add_outEdge(BC)
 
 
-C.inEdges.append(AC)
-C.inEdges.append(BC)
-C.outEdges.append(BC)
+C.add_inEdge(AC)
+C.add_inEdge(BC)
+C.add_outEdge(BC)
 
 # Print the network stats
 print(simple_network.name)
