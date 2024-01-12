@@ -1,32 +1,32 @@
 from module.Road_Network import Road_Network
 
 # Create a new road network
-network = Road_Network("Test Network", 3, 3)
+simple_network = Road_Network("Test Network", 3, 3)
 
 # Defining the nodes
-A = network.nodes[0]
+A = simple_network.nodes[0]
 A.code = "A"
 
-B = network.nodes[1]
+B = simple_network.nodes[1]
 B.code = "B"
 
-C = network.nodes[2]
+C = simple_network.nodes[2]
 C.code = "C"
 
 # Defining the edges
-AB = network.edges[0]
+AB = simple_network.edges[0]
 AB.code = "AB"
 AB.sourceNode = A
 AB.targetNode = B
 AB.length = 10
 
-AC = network.edges[1]
+AC = simple_network.edges[1]
 AC.code = "AC"
 AC.sourceNode = A
 AC.targetNode = C
 AC.length = 10
 
-BC = network.edges[2]
+BC = simple_network.edges[2]
 BC.code = "BC"
 BC.sourceNode = B
 BC.targetNode = C
@@ -38,36 +38,52 @@ A.outEdges.append(AB)
 A.outEdges.append(AC)
 
 B.inEdges.append(AB)
+B.inEdges.append(BC)
 B.outEdges.append(BC)
+
 
 C.inEdges.append(AC)
 C.inEdges.append(BC)
+C.outEdges.append(BC)
 
 # Print the network stats
-print(network.name)
+print(simple_network.name)
 print("Nodes:")
-for node in network.nodes:
+for node in simple_network.nodes:
     print(node.code)
 print("Edges:")
-for edge in network.edges:
-    print(edge.sourceNode.code, edge.targetNode.code, edge.edgeType, edge.length)
+for edge in simple_network.edges:
+    if edge.sourceNode and edge.targetNode:
+        print(edge.sourceNode.code, edge.targetNode.code, edge.edgeType, edge.length)
 
 print("OutEdges of A:")
-for edges in network.find_node("A").outEdges:
-    print(edges.code)
+node_A = simple_network.find_node("A")
+if node_A and node_A.outEdges:
+    for edges in node_A.outEdges:
+        print(edges.code)
 
 print("InEdges of C:")
-for edges in network.find_node("C").inEdges:
-    print(edges.code)
+node_C = simple_network.find_node("C")
+if node_C and node_C.inEdges:
+    for edges in node_C.inEdges:
+        print(edges.code)
 
 print("OutEdges of C:")
-for edges in network.find_node("C").outEdges:
-    print(edges.code)
+if node_C and node_C.outEdges:
+    for edges in node_C.outEdges:
+        print(edges.code)
 
 print("InEdges of B:")
-for edges in network.find_node("B").inEdges:
-    print(edges.code)
+node_B = simple_network.find_node("B")
+if node_B and node_B.inEdges:
+    for edges in node_B.inEdges:
+        print(edges.code)
 
 print("OutEdges of B:")
-for edges in network.find_node("B").outEdges:
-    print(edges.code)
+if node_B and node_B.outEdges:
+    for edges in node_B.outEdges:
+        print(edges.code)
+
+from utility.save_network import save_network
+
+save_network(simple_network)
