@@ -18,20 +18,20 @@ AB = simple_network.edges[0]
 AB.change_code("AB")
 AB.change_sourceNode(A)
 AB.change_targetNode(B)
-AB.change_length(10)
+#AB.change_length(10)
 
 AC = simple_network.edges[1]
 AC.change_code("AC")
 AC.change_sourceNode(A)
 AC.change_targetNode(C)
-AC.change_length(10)
+#AC.change_length(10)
 
 BC = simple_network.edges[2]
 BC.change_code("BC")
 BC.change_sourceNode(B)
 BC.change_targetNode(C)
 BC.change_edgeType("bi")
-BC.change_length(10)
+#BC.change_length(10)
 
 # Update the inEdges and outEdges of the nodes
 A.add_outEdge(AB)
@@ -84,6 +84,6 @@ if node_B and node_B.outEdges:
     for edges in node_B.outEdges:
         print(edges.code)
 
-from utility.save_network import save_network
+# from utility.save_network import save_network
 
-save_network(simple_network)
+# save_network(simple_network)

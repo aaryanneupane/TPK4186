@@ -1,0 +1,132 @@
+{
+  "network_name": "square_5_nodes",
+  "node_size": 5,
+  "edge_size": 5,
+  "node_codes": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5"
+  ],
+  "edge_codes": [
+    "1-2",
+    "1-4",
+    "2-4",
+    "2-5",
+    "3-5"
+  ],
+  "edges": [
+    {
+      "edge_code": "1-2",
+      "source_nodes": [
+        "1"
+      ],
+      "target_nodes": [
+        "2"
+      ],
+      "edge_type": "uni",
+      "length": 1.4142135623730951
+    },
+    {
+      "edge_code": "1-4",
+      "source_nodes": [
+        "1"
+      ],
+      "target_nodes": [
+        "4"
+      ],
+      "edge_type": "bi",
+      "length": 1.0
+    },
+    {
+      "edge_code": "2-4",
+      "source_nodes": [
+        "2"
+      ],
+      "target_nodes": [
+        "4"
+      ],
+      "edge_type": "uni",
+      "length": 2.23606797749979
+    },
+    {
+      "edge_code": "2-5",
+      "source_nodes": [
+        "2"
+      ],
+      "target_nodes": [
+        "5"
+      ],
+      "edge_type": "uni",
+      "length": 2.23606797749979
+    },
+    {
+      "edge_code": "3-5",
+      "source_nodes": [
+        "3"
+      ],
+      "target_nodes": [
+        "5"
+      ],
+      "edge_type": "bi",
+      "length": 1.0
+    }
+  ],
+  "nodes": [
+    {
+      "node_code": "1",
+      "in_edges": [
+        "1-4"
+      ],
+      "out_edges": [
+        "1-2",
+        "1-4"
+      ],
+      "attributes": {}
+    },
+    {
+      "node_code": "2",
+      "in_edges": [
+        "1-2"
+      ],
+      "out_edges": [
+        "2-4",
+        "2-5"
+      ],
+      "attributes": {}
+    },
+    {
+      "node_code": "3",
+      "in_edges": [
+        "3-5"
+      ],
+      "out_edges": [
+        "3-5"
+      ],
+      "attributes": {}
+    },
+    {
+      "node_code": "4",
+      "in_edges": [
+        "1-4",
+        "2-4"
+      ],
+      "out_edges": [
+        "1-4"
+      ],
+      "attributes": {}
+    },
+    {
+      "node_code": "5",
+      "in_edges": [
+        "2-5",
+        "3-5"
+      ],
+      "out_edges": [
+        "3-5"
+      ],
+      "attributes": {}
+    }
+  ]
+}

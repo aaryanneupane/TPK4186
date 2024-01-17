@@ -33,4 +33,34 @@ class Road_Network:
     def delete_edge(self, edgeIndex):
         self.edges.remove(edgeIndex)
 
+    #Got help from chatGPT
+    def has_path(self, start_node_code: str, end_node_code: str) -> bool:
+        start_node = self.find_node(start_node_code)
+        end_node = self.find_node(end_node_code)
 
+        if not start_node or not end_node:
+            return False
+
+        visited = set()
+
+        def dfs(current_node):
+            if current_node == end_node:
+                return True
+            visited.add(current_node)
+
+            for edge in current_node.outEdges:
+                neighbor = edge.targetNode
+                if neighbor not in visited:
+                    if dfs(neighbor):
+                        return True
+            return False
+        return dfs(start_node)
+    
+    def exists_any_path(self) -> bool:
+        all_nodes = self.nodes
+        for start_node in all_nodes:
+            for end_node in all_nodes:
+                if start_node != end_node:
+                    if not self.has_path(start_node.code, end_node.code):
+                        return False
+        return True

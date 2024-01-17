@@ -14,7 +14,7 @@ def grid_network(name:str, rows:int, columns:int) -> Road_Network:
     edges_list = np.array(network.edges).reshape((num_edges,))
 
     edge_counter = 0
-
+    
     for row in range(rows - 1):
         for col in range(columns):
             # Vertical edges
