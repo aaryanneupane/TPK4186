@@ -3,7 +3,7 @@ from module.Node import Node
 from module.Edge import Edge
 import json
 
-def load_network(file_path) -> (Road_Network):
+def load_network(file_path:str) -> Road_Network:
     with open(file_path, "r") as f:
         network_data = json.load(f)
 

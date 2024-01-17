@@ -3,7 +3,7 @@ import os
 import json
 
 
-def save_network(Road_Network):
+def save_network(Road_Network:Road_Network):
     directory_path = "networks"
     os.makedirs(directory_path, exist_ok=True)
     file_path = os.path.join(directory_path, Road_Network.name + ".json")
@@ -19,14 +19,15 @@ def save_network(Road_Network):
     }
 
     for edge in Road_Network.edges:
-        edge_data = {
-            "edge_code": edge.code,
-            "source_nodes": [edge.sourceNode.code],
-            "target_nodes": [edge.targetNode.code],
-            "edge_type": edge.edgeType,
-            "length": edge.length,
-        }
-        network_data["edges"].append(edge_data)
+        if edge.sourceNode and edge.targetNode:
+            edge_data = {
+                "edge_code": edge.code,
+                "source_nodes": [edge.sourceNode.code],
+                "target_nodes": [edge.targetNode.code],
+                "edge_type": edge.edgeType,
+                "length": edge.length,
+            }
+            network_data["edges"].append(edge_data)
 
     for node in Road_Network.nodes:
         node_data = {
