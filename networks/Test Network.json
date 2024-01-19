@@ -21,7 +21,7 @@
       "target_nodes": [
         "B"
       ],
-      "edge_type": "uni",
+      "edge_type": "bi",
       "length": 10
     },
     {
@@ -32,7 +32,7 @@
       "target_nodes": [
         "C"
       ],
-      "edge_type": "uni",
+      "edge_type": "bi",
       "length": 10
     },
     {
@@ -50,7 +50,10 @@
   "nodes": [
     {
       "node_code": "A",
-      "in_edges": [],
+      "in_edges": [
+        "AB",
+        "AC"
+      ],
       "out_edges": [
         "AB",
         "AC"
@@ -64,6 +67,7 @@
         "BC"
       ],
       "out_edges": [
+        "AB",
         "BC"
       ],
       "attributes": {}
@@ -75,6 +79,7 @@
         "BC"
       ],
       "out_edges": [
+        "AC",
         "BC"
       ],
       "attributes": {}

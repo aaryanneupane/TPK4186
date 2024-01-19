@@ -1,6 +1,7 @@
 from module.Node import Node 
 from module.Edge import Edge
 from typing import List
+from numpy import floating
 
 class Road_Network:
     def __init__(self, name:str, nodes=0, edges=0):
@@ -50,6 +51,8 @@ class Road_Network:
 
             for edge in current_node.outEdges:
                 neighbor = edge.targetNode
+                if edge.edgeType == "bi" and current_node is not edge.sourceNode:
+                    neighbor = edge.sourceNode
                 if neighbor not in visited:
                     if dfs(neighbor):
                         return True
@@ -64,3 +67,31 @@ class Road_Network:
                     if not self.has_path(start_node.code, end_node.code):
                         return False
         return True
+    
+    def calculate_length(self, start_node_code: str, end_node_code: str):
+        start_node = self.find_node(start_node_code)
+        visited = {}
+        candidates = {}
+        if start_node:
+            neighbor_distance = start_node.get_targets()
+            
+            for key, value in neighbor_distance:
+                candidates[key] = value
+            
+            shortest_node = None
+            shortest_length = float("inf")
+            for candidate, value in neighbor_distance:
+                if value < shortest_length:
+                    shortest_node = candidate
+                    shortest_length = value
+            visited[shortest_node] = shortest_length
+
+            for item in candidates:
+                candidate_distance = item.get_targets()
+                for key, value in candidate_distance:
+                    if candidates[key] > (value + visited[item]):
+                        candidates[key] = value
+
+            
+                
+
