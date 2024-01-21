@@ -38,7 +38,7 @@ class Node:
         nodes = {}
         for edge in self.outEdges:
             if edge.edgeType == "bi" and self is not edge.sourceNode:
-                nodes[edge.sourceNode] =  edge.length
+                nodes[edge.sourceNode.code] =  edge.length
             else:
-                nodes[edge.targetNode] =  edge.length
+                nodes[edge.targetNode.code] =  edge.length
         return nodes

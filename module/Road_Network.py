@@ -18,10 +18,11 @@ class Road_Network:
     def add_edge(self, edge:Edge):
         self.edges.append(edge)
 
-    def find_node(self, node_code:str) -> Node | None:
+    def find_node(self, node_code:str) -> Node:
         for node in self.nodes:
             if node.code == node_code:
                 return node
+        return Node("0") #returning a node with code 0 if node not found
 
     def find_edge(self, edge_code:str) -> Edge | None:
         for edge in self.edges:
@@ -68,30 +69,32 @@ class Road_Network:
                         return False
         return True
     
-    def calculate_length(self, start_node_code: str, end_node_code: str):
-        start_node = self.find_node(start_node_code)
-        visited = {}
-        candidates = {}
-        if start_node:
-            neighbor_distance = start_node.get_targets()
-            
-            for key, value in neighbor_distance:
-                candidates[key] = value
-            
-            shortest_node = None
-            shortest_length = float("inf")
-            for candidate, value in neighbor_distance:
-                if value < shortest_length:
-                    shortest_node = candidate
-                    shortest_length = value
-            visited[shortest_node] = shortest_length
+    def node_neighbors(self) -> dict:
+        neighbors = {}
+        for node in self.nodes:
+            neighbors[node.code] = node.get_targets()
+        return neighbors
 
-            for item in candidates:
-                candidate_distance = item.get_targets()
-                for key, value in candidate_distance:
-                    if candidates[key] > (value + visited[item]):
-                        candidates[key] = value
 
-            
-                
-
+    def dijkstra(self, source_node_code: str, end_node_code: str):
+        graph = self.node_neighbors()
+        #print(graph)
+        visited = {node.code:False for node in self.nodes}
+        cost = {node.code: {"distance": float("inf"), "path": []} for node in self.nodes}
+        cost[source_node_code]["distance"] = 0
+        tmp = source_node_code
+        for i in range(len(self.nodes)):
+            if visited[tmp] == False:
+                visited[tmp] = True
+                for node in graph[tmp]:
+                    distance = graph[tmp][node] + cost[tmp]["distance"]
+                    if distance < cost[node]["distance"]:
+                        cost[node]["distance"] = distance
+                        cost[node]["path"] = cost[tmp]["path"] + list(tmp)
+                min_distance = [(node, cost[node]["distance"]) for node in cost if not visited[node]]
+                if min_distance:        
+                    min_node = min(min_distance, key=lambda x: x[1])[0] #Gives the tuple with the shortest distance in the min_distance list and extracts the node code from the tuple
+                    #print(("This is min_node", min_node))
+                    tmp = min_node
+        cost[end_node_code]["path"].append(end_node_code)
+        return cost[end_node_code]

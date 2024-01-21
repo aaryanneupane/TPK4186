@@ -58,7 +58,7 @@
       "target_nodes": [
         "5"
       ],
-      "edge_type": "uni",
+      "edge_type": "bi",
       "length": 2.23606797749979
     },
     {
@@ -88,7 +88,8 @@
     {
       "node_code": "2",
       "in_edges": [
-        "1-2"
+        "1-2",
+        "2-5"
       ],
       "out_edges": [
         "2-4",
@@ -124,7 +125,8 @@
         "3-5"
       ],
       "out_edges": [
-        "3-5"
+        "3-5",
+        "2-5"
       ],
       "attributes": {}
     }
