@@ -18,11 +18,10 @@ class Road_Network:
     def add_edge(self, edge:Edge):
         self.edges.append(edge)
 
-    def find_node(self, node_code:str) -> Node:
+    def find_node(self, node_code:str) -> Node | None:
         for node in self.nodes:
             if node.code == node_code:
                 return node
-        return Node("0") #returning a node with code 0 if node not found
 
     def find_edge(self, edge_code:str) -> Edge | None:
         for edge in self.edges:

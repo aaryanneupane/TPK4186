@@ -2,7 +2,7 @@ import module.Node as nd
 from numpy import floating
 
 class Edge:
-    def __init__(self, code:str, edgeType = "uni", length = 0):
+    def __init__(self, code:str, edgeType = "uni", length = 1):
         self.code = code
         self.sourceNode = None
         self.targetNode = None
