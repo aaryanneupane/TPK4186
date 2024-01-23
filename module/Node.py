@@ -11,22 +11,22 @@ class Node:
     def change_code(self, new_code:str):
         self.code = new_code
 
-    def add_inEdge(self, edge:ed.Edge):
+    def add_inEdge(self, edge):
         self.inEdges.append(edge)
         if edge.edgeType == "bi":
             self.outEdges.append(edge)
 
-    def add_outEdge(self, edge:ed.Edge):
+    def add_outEdge(self, edge):
         self.outEdges.append(edge)
         if edge.edgeType == "bi":
             self.inEdges.append(edge)
 
-    def delete_inEdge(self, edge:ed.Edge):
+    def delete_inEdge(self, edge):
         self.inEdges.remove(edge)
         if edge.edgeType == "bi":
             self.outEdges.remove(edge)
 
-    def delete_outEdge(self, edge:ed.Edge):
+    def delete_outEdge(self, edge):
         self.outEdges.remove(edge)
         if edge.edgeType == "bi":
             self.inEdges.remove(edge)
