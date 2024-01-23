@@ -1,0 +1,103 @@
+{
+    "network_name": "dijkstra_test",
+    "node_size": 6,
+    "edge_size": 8,
+    "node_codes": ["A", "B", "C", "D", "E", "F"],
+    "edge_codes": ["A-B", "A-C", "B-E", "B-D", "C-D", "C-E", "D-F", "E-F"],
+    "edges": [
+      {
+        "edge_code": "A-B",
+        "source_nodes": ["A"],
+        "target_nodes": ["B"],
+        "edge_type": "uni",
+        "length": 2.0
+      },
+      {
+        "edge_code": "A-C",
+        "source_nodes": ["A"],
+        "target_nodes": ["C"],
+        "edge_type": "uni",
+        "length": 4.0
+      },
+      {
+        "edge_code": "B-E",
+        "source_nodes": ["B"],
+        "target_nodes": ["E"],
+        "edge_type": "uni",
+        "length": 5.0
+      },
+      {
+        "edge_code": "B-D",
+        "source_nodes": ["B"],
+        "target_nodes": ["D"],
+        "edge_type": "uni",
+        "length": 8.0
+      },
+      {
+        "edge_code": "C-D",
+        "source_nodes": ["C"],
+        "target_nodes": ["D"],
+        "edge_type": "uni",
+        "length": 1.0
+      },
+      {
+        "edge_code": "C-E",
+        "source_nodes": ["C"],
+        "target_nodes": ["E"],
+        "edge_type": "uni",
+        "length": 10.0
+      },
+      {
+        "edge_code": "D-F",
+        "source_nodes": ["D"],
+        "target_nodes": ["F"],
+        "edge_type": "uni",
+        "length": 3.0
+      },
+      {
+        "edge_code": "E-F",
+        "source_nodes": ["E"],
+        "target_nodes": ["F"],
+        "edge_type": "uni",
+        "length": 2.0
+      }
+    ],
+    "nodes": [
+      {
+        "node_code": "A",
+        "in_edges": [],
+        "out_edges": ["A-B", "A-C"],
+        "attributes": {}
+      },
+      {
+        "node_code": "B",
+        "in_edges": ["A-B"],
+        "out_edges": ["B-E", "B-D"],
+        "attributes": {}
+      },
+      {
+        "node_code": "C",
+        "in_edges": ["A-C"],
+        "out_edges": ["C-D", "C-E"],
+        "attributes": {}
+      },
+      {
+        "node_code": "D",
+        "in_edges": ["B-D", "C-D"],
+        "out_edges": ["D-F"],
+        "attributes": {}
+      },
+      {
+        "node_code": "E",
+        "in_edges": ["B-E", "C-E"],
+        "out_edges": ["E-F"],
+        "attributes": {}
+      },
+      {
+        "node_code": "F",
+        "in_edges": ["D-F", "E-F"],
+        "out_edges": [],
+        "attributes": {}
+      }
+    ]
+  }

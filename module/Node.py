@@ -1,4 +1,5 @@
 import module.Edge as ed
+from typing import List
 
 class Node:
     def __init__(self, code:str):
@@ -32,3 +33,12 @@ class Node:
 
     def add_Attribute(self, key:str, value:str):
         self.attributes[key] = value
+
+    def get_targets(self):
+        nodes = {}
+        for edge in self.outEdges:
+            if edge.edgeType == "bi" and self is not edge.sourceNode:
+                nodes[edge.sourceNode.code] =  edge.length
+            else:
+                nodes[edge.targetNode.code] =  edge.length
+        return nodes

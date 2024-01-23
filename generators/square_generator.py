@@ -3,7 +3,7 @@ from module.Edge import Edge
 import numpy as np
 
 def euclidean_distance(tuple1:tuple, tuple2:tuple):
-    return np.linalg.norm(np.array(tuple2) - np.array(tuple1))
+    return round(np.linalg.norm(np.array(tuple2) - np.array(tuple1)),2)
 
 def probability(distance) -> float:
     alpha = 0.2

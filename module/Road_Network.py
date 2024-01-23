@@ -1,6 +1,7 @@
 from module.Node import Node 
 from module.Edge import Edge
 from typing import List
+from numpy import floating
 
 class Road_Network:
     def __init__(self, name:str, nodes=0, edges=0):
@@ -50,6 +51,8 @@ class Road_Network:
 
             for edge in current_node.outEdges:
                 neighbor = edge.targetNode
+                if edge.edgeType == "bi" and current_node is not edge.sourceNode:
+                    neighbor = edge.sourceNode
                 if neighbor not in visited:
                     if dfs(neighbor):
                         return True
@@ -64,3 +67,33 @@ class Road_Network:
                     if not self.has_path(start_node.code, end_node.code):
                         return False
         return True
+    
+    def node_neighbors(self) -> dict:
+        neighbors = {}
+        for node in self.nodes:
+            neighbors[node.code] = node.get_targets()
+        return neighbors
+
+
+    def dijkstra(self, source_node_code: str, end_node_code: str):
+        graph = self.node_neighbors()
+        #print(graph)
+        visited = {node.code:False for node in self.nodes}
+        cost = {node.code: {"distance": float("inf"), "path": []} for node in self.nodes}
+        cost[source_node_code]["distance"] = 0
+        tmp = source_node_code
+        for i in range(len(self.nodes)):
+            if visited[tmp] == False:
+                visited[tmp] = True
+                for node in graph[tmp]:
+                    distance = graph[tmp][node] + cost[tmp]["distance"]
+                    if distance < cost[node]["distance"]:
+                        cost[node]["distance"] = distance
+                        cost[node]["path"] = cost[tmp]["path"] + list(tmp)
+                min_distance = [(node, cost[node]["distance"]) for node in cost if not visited[node]]
+                if min_distance:        
+                    min_node = min(min_distance, key=lambda x: x[1])[0] #Gives the tuple with the shortest distance in the min_distance list and extracts the node code from the tuple
+                    #print(("This is min_node", min_node))
+                    tmp = min_node
+        cost[end_node_code]["path"].append(end_node_code)
+        return cost[end_node_code]
