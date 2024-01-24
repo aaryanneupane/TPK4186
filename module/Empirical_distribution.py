@@ -1,5 +1,7 @@
+import numpy as np
 class EmpiricalDistribution:
-    def __init__(self, edge):
+    
+    def __init__(self):
         self.points = []
         
     def addPoint(self, point: tuple):
@@ -43,7 +45,36 @@ class EmpiricalDistribution:
             proportion = (time - start[0]) / (end[0] - start[0])
             interpolated_value = start[1] + proportion * (end[1] - start[1])
             return round(interpolated_value,2)
-
+           
+     def generate_distribution_constant(self):
+         time_to_drive = np.random.randint(10, 60) 
+         num_point = np.random.randint(20,100) 
+         self.addPoint((0,time_to_drive)) 
+         for _ in range(len(num_point)):
+              self.addPoint(self.points[-1][0]+np.random.randint(0,120), time_to_drive - np.random.randint(-3,3)) 
+     
+     def generate_distribution_rush(self):
+          rush_hours_morning = np.linspace(420, 540,1)
+          rush_hours_afternoon = np.linspace(900, 1020,1)
+          time_to_drive = np.random.randint(10,60)
+          num_point = np.random.randint(20,100)
+          self.addPoint((0,time_to_drive)) 
+          for _ in range(len(num_point)):
+               tmp = np.random.randint(0,120)
+               if self.points[-1][0] + tmp in rush_hours_morning or self.points[-1][0] + tmp in rush_hours_afternoon:
+                    self.addPoint(self.points[-1][0]+ tmp, time_to_drive - np.random.randint(15,40))
+               else:
+                    self.addPoint(self.points[-1][0]+tmp, time_to_drive - np.random.randint(-3,3))
+          
+              
+              
+               
+               
+               
+    
+                   
+          
+          
 
 
         
