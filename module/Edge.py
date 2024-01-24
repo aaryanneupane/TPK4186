@@ -1,4 +1,5 @@
 import module.Node as nd
+import module.Empirical_distribution as ed
 from numpy import floating
 
 class Edge:
@@ -8,6 +9,7 @@ class Edge:
         self.targetNode = None
         self.edgeType = edgeType
         self.length = length
+        self.distribution = {"Monday": ed.EmpiricalDistribution(self), "Tuesday": ed.EmpiricalDistribution(self), "Wednesday": ed.EmpiricalDistribution(self), "Thursday": ed.EmpiricalDistribution(self), "Friday": ed.EmpiricalDistribution(self), "Saturday": ed.EmpiricalDistribution(self), "Sunday": ed.EmpiricalDistribution(self)}
 
     def change_code(self, new_code:str):
         self.code = new_code
@@ -29,3 +31,5 @@ class Edge:
             self.targetNode.delete_inEdge(self)
         self.targetNode = targetNode
         targetNode.add_inEdge(self)
+
+    
