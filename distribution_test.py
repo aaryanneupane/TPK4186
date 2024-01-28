@@ -24,5 +24,5 @@ from module.Empirical_distribution import EmpiricalDistribution
 
 edge_2 = Edge("test", length=30)
 
-# edge_2.distribution.printDistribution('Monday')
-#print(edge_2.distribution.interpolate("Monday", 521))
+edge_2.distribution.printDistribution('Monday')
+print(edge_2.distribution.interpolate("Monday", 521))

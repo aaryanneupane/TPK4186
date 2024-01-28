@@ -32,6 +32,7 @@ def load_network(file_path:str) -> Road_Network:
             edge.targetNode = loaded_network.find_node(edge_data["target_nodes"][0])
             edge.edgeType = edge_data["edge_type"]
             edge.length = edge_data["length"]
+            edge.distribution.distribution = edge_data["distribution"]
 
     for node_data in nodes_data:
         node = loaded_network.find_node(node_data["node_code"])

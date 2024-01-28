@@ -26,6 +26,7 @@ def save_network(Road_Network:Road_Network):
                 "target_nodes": [edge.targetNode.code],
                 "edge_type": edge.edgeType,
                 "length": edge.length,
+                "distribution": edge.distribution.distribution,
             }
             network_data["edges"].append(edge_data)
 
