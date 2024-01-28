@@ -3,7 +3,6 @@ import numpy as np
 
 class EmpiricalDistribution:
     def __init__(self):
-        self.points = []
         self.distribution = {
             "Monday": [],
             "Tuesday": [],
@@ -11,15 +10,12 @@ class EmpiricalDistribution:
             "Thursday": [],
             "Friday": [],
             "Saturday": [],
-            "Sunday": [],
-        }
-        self.generate_distribution_rush("Monday")
-        self.generate_distribution_rush("Tuesday")
-        self.generate_distribution_rush("Wednesday")
-        self.generate_distribution_rush("Thursday")
-        self.generate_distribution_rush("Friday")
-        self.generate_distribution_constant("Saturday")
-        self.generate_distribution_constant("Sunday")
+            "Sunday": [],}
+        
+        for day in self.distribution:
+            if day == "Saturday" or day == "Sunday":
+                self.generate_distribution_constant(day)
+            self.generate_distribution_rush(day)
 
     def addPoint(self, day: str, point: tuple):
         if point not in self.distribution[day]:

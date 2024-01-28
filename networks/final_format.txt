@@ -1,0 +1,59 @@
+{
+  "network_name": "network_format",
+
+  "node_size": 1,
+
+  "edge_size": 1,
+
+  "node_codes": [
+    "N1",
+    "N2"
+  ],
+  
+  "edge_codes": [
+    "E1",
+  ],
+
+  "edges": [
+    {
+      "edge_code": "E1",
+      "source_nodes": [
+        "N1"
+      ],
+      "target_nodes": [
+        "N2"
+      ],
+      "edge_type": "uni",
+      "length": 1 
+      "distribution": {
+            "Monday": [
+                (t_i, d_i)
+            ],
+            "Tuesday": [],
+            "Wednesday": [],
+            "Thursday": [],
+            "Friday": [],
+            "Saturday": [],
+            "Sunday": [],}
+    }
+  ],
+
+  "nodes": [
+    {
+      "node_code": "N1",
+      "in_edges": [],
+      "out_edges": [
+        "E1"
+      ],
+      "attributes": {}
+    },
+    {
+      "node_code": "N2",
+      "in_edges": [
+        "E1"
+      ],
+      "out_edges": [],
+      "attributes": {}
+    }
+  ]
+}
