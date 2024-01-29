@@ -68,15 +68,21 @@ class Road_Network:
                         return False
         return True
     
-    def node_neighbors(self) -> dict:
+    def node_neighbors_length(self) -> dict:
         neighbors = {}
         for node in self.nodes:
-            neighbors[node.code] = node.get_targets()
+            neighbors[node.code] = node.get_targets_length()
+        return neighbors
+    
+    def node_neighbors_time(self, day:str, time: int) -> dict:
+        neighbors = {}
+        for node in self.nodes:
+            neighbors[node.code] = node.get_targets_time(day, time)
         return neighbors
 
 
     def dijkstra(self, source_node_code: str, end_node_code: str):
-        graph = self.node_neighbors()
+        graph = self.node_neighbors_length()
         #print(graph)
         visited = {node.code:False for node in self.nodes}
         cost = {node.code: {"distance": float("inf"), "path": []} for node in self.nodes}
@@ -93,6 +99,29 @@ class Road_Network:
                 min_distance = [(node, cost[node]["distance"]) for node in cost if not visited[node]]
                 if min_distance:        
                     min_node = min(min_distance, key=lambda x: x[1])[0] #Gives the tuple with the shortest distance in the min_distance list and extracts the node code from the tuple
+                    #print(("This is min_node", min_node))
+                    tmp = min_node
+        cost[end_node_code]["path"].append(end_node_code)
+        return cost[end_node_code]
+    
+    
+    def fastest_route(self, source_node_code: str, end_node_code: str, day: str, time: int):
+        graph = self.node_neighbors_time(day, time)
+        visited = {node.code:False for node in self.nodes}
+        cost = {node.code: {"time": float("inf"), "path": []} for node in self.nodes}
+        cost[source_node_code]["time"] = 0
+        tmp = source_node_code
+        for _ in range(len(self.nodes)):
+            if visited[tmp] == False:
+                visited[tmp] = True
+                for node in graph[tmp]:
+                    time = graph[tmp][node] + cost[tmp]["time"]
+                    if time < cost[node]["time"]:
+                        cost[node]["time"] = time
+                        cost[node]["path"] = cost[tmp]["path"] + list(tmp)
+                min_time = [(node, cost[node]["time"]) for node in cost if not visited[node]]
+                if min_time:        
+                    min_node = min(min_time, key=lambda x: x[1])[0] #Gives the tuple with the shortest distance in the min_distance list and extracts the node code from the tuple
                     #print(("This is min_node", min_node))
                     tmp = min_node
         cost[end_node_code]["path"].append(end_node_code)
