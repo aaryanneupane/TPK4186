@@ -65,13 +65,7 @@ class EmpiricalDistribution:
         for _ in range(num_point):
             tmp = np.random.randint(0, 120)
             while self.distribution[day][-1][0] + tmp < 1440:
-                self.addPoint(
-                    day,
-                    (
-                        self.distribution[day][-1][0] + tmp,
-                        time_to_drive - np.random.randint(-3, 3),
-                    ),
-                )
+                self.addPoint(day,(self.distribution[day][-1][0] + tmp, time_to_drive - np.random.randint(-3, 3)))
                 tmp = np.random.randint(0, 120)
 
     def generate_distribution_rush(self, day: str):
@@ -83,23 +77,9 @@ class EmpiricalDistribution:
         for _ in range(num_point):
             tmp = np.random.randint(0, 120)
             while self.distribution[day][-1][0] + tmp < 1440:
-                if (
-                    self.distribution[day][-1][0] + tmp in rush_hours_morning
-                    or self.distribution[day][-1][0] + tmp in rush_hours_afternoon
-                ):
-                    self.addPoint(
-                        day,
-                        (
-                            self.distribution[day][-1][0] + tmp,
-                            time_to_drive + np.random.randint(15, 40),
-                        ),
-                    )
+                if (self.distribution[day][-1][0] + tmp in rush_hours_morning 
+                    or self.distribution[day][-1][0] + tmp in rush_hours_afternoon):
+                    self.addPoint(day,(self.distribution[day][-1][0] + tmp,time_to_drive + np.random.randint(15, 40)))
                 else:
-                    self.addPoint(
-                        day,
-                        (
-                            self.distribution[day][-1][0] + tmp,
-                            time_to_drive - np.random.randint(-3, 3),
-                        ),
-                    )
+                    self.addPoint(day,(self.distribution[day][-1][0] + tmp,time_to_drive - np.random.randint(-3, 3)))
                 tmp = np.random.randint(0, 120)
