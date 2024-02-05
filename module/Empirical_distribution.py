@@ -1,5 +1,6 @@
 import numpy as np
 
+'''This class represents an empirical distribution of drive times for a given day of the week.'''
 
 class EmpiricalDistribution:
     def __init__(self):

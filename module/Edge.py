@@ -2,6 +2,8 @@ import module.Node as nd
 from module.Empirical_distribution import EmpiricalDistribution
 from numpy import floating
 
+'''This class represents an edge in a road network.'''
+
 class Edge:
     def __init__(self, code:str, edgeType = "uni", length = 1):
         self.code = code

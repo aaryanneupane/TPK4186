@@ -1,6 +1,8 @@
 from module.Road_Network import Road_Network
 import numpy as np
 
+'''This method generates a grid network with the given number of rows and columns.'''
+
 def grid_network(name:str, rows:int, columns:int) -> Road_Network:
     num_nodes = rows * columns
     num_edges = (rows - 1) * columns + (columns - 1) * rows

@@ -1,6 +1,8 @@
 import module.Edge as ed
 from typing import List
 
+'''This class represents a node in a road network.'''
+
 class Node:
     def __init__(self, code:str):
         self.code = code

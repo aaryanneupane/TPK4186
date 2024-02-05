@@ -3,6 +3,8 @@ from module.Edge import Edge
 from typing import List
 from numpy import floating
 
+'''This class represents a road network.'''
+
 class Road_Network:
     def __init__(self, name:str, nodes=0, edges=0):
         self.name = name
@@ -34,7 +36,6 @@ class Road_Network:
     def delete_edge(self, edgeIndex):
         self.edges.remove(edgeIndex)
 
-    #Got help from chatGPT
     def has_path(self, start_node_code: str, end_node_code: str) -> bool:
         start_node = self.find_node(start_node_code)
         end_node = self.find_node(end_node_code)

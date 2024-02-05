@@ -1,6 +1,10 @@
 from module.Edge import Edge
 from module.Empirical_distribution import EmpiricalDistribution
 
+'''This is a test for the EmpiricalDistribution class. 
+It used to create a handmade distribution for each day of the week.
+But was later replaced with the automatic generation of the distribution in the Edge class'''
+
 # test_edge = Edge("test", length=30)
 # test_edge.distribution["Monday"].addPoint((17, 34))
 # test_edge.distribution["Monday"].addPoint((124, 30))
@@ -20,7 +24,6 @@ from module.Empirical_distribution import EmpiricalDistribution
 # test_dist.generate_distribution_constant("Sunday")
 
 # print(test_dist.distribution["Saturday"])
-
 
 edge_2 = Edge("test", length=30)
 

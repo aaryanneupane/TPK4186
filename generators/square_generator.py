@@ -2,6 +2,8 @@ from module.Road_Network import Road_Network
 from module.Edge import Edge
 import numpy as np
 
+'''This method generates a square network with the given number of nodes.'''
+
 def euclidean_distance(tuple1:tuple, tuple2:tuple):
     return round(np.linalg.norm(np.array(tuple2) - np.array(tuple1)),2)
 

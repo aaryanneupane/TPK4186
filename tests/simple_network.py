@@ -1,5 +1,8 @@
 from module.Road_Network import Road_Network
 
+'''This is a simple hand-made network with 3 nodes and 3 edges. 
+It is used to test the basic functionality of the Road_Network class.'''
+
 # Create a new road network
 simple_network = Road_Network("Test Network", 3, 3)
 
@@ -83,7 +86,3 @@ print("OutEdges of B:")
 if node_B and node_B.outEdges:
     for edges in node_B.outEdges:
         print(edges.code)
-
-# from utility.save_network import save_network
-
-# save_network(simple_network)

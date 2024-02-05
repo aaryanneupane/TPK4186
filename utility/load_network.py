@@ -3,6 +3,8 @@ from module.Node import Node
 from module.Edge import Edge
 import json
 
+'''This method loads a network from a file and returns a Road_Network object.'''
+
 def load_network(file_path:str) -> Road_Network:
     with open(file_path, "r") as f:
         network_data = json.load(f)

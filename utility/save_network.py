@@ -2,6 +2,7 @@ from module.Road_Network import Road_Network
 import os
 import json
 
+'''This method saves a network to a file in our chosen json format.'''
 
 def save_network(Road_Network:Road_Network):
     directory_path = "networks"
