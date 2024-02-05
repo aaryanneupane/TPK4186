@@ -127,3 +127,24 @@ class Road_Network:
                     tmp = min_node
         cost[end_node_code]["path"].append(end_node_code)
         return cost[end_node_code]
+    
+    def max_min(self, source_node_code: str, end_node_code:str, day:str):
+        time = 0
+        all_durations = []
+        while time<1440:
+            duration = self.fastest_route(source_node_code, end_node_code, day, time)
+            all_durations.append((time,duration['time']))
+            time+=30
+        max_duration = max(all_durations, key=lambda x: x[1])
+        hours_max = int(max_duration[0]//60)
+        minutes_max = int(max_duration[0]%60)
+        worst_time = str(hours_max) + ":" + str(minutes_max)
+        min_duration = min(all_durations, key=lambda x:x[1])
+        hours_min = int(min_duration[0]//60)
+        minutes_min = int(min_duration[0]%60)
+        best_time = str(hours_min) + ":" + str(minutes_min)
+        result = {"Worst time": max_duration[1], "Time of the day of worst time": worst_time, "Best time": min_duration[1], "Time of the day of best time": best_time}
+        return result
+
+             
+
