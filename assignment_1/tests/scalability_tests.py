@@ -71,11 +71,11 @@ def main():
     # Assuming an edge exists between the chosen nodes
     print(
         f"""\n
-           [Square 100 Nodes] The runtime for finding the fastest route between a node 47 and 94 on a Thursday at 7 is {fastest_route_simple_square} seconds.
-           [Grid 100 Nodes] The runtime for finding the fastest route between a node 35 and 77 on a Saturday at 14 is {fastest_route_simple_grid} seconds.
+           [Square 100 Nodes] The runtime for finding the fastest route between the node 47 and 94 on a Thursday at 7 is {fastest_route_simple_square} seconds.
+           [Grid 100 Nodes] The runtime for finding the fastest route between the node 35 and 77 on a Saturday at 14 is {fastest_route_simple_grid} seconds.
            \n
-           [Square 1000 Nodes] The runtime for finding the fastest route between a node  and 94 on a Wednesday at 17 is {fastest_route_complex_square} seconds.
-           [Grid 1000 Nodes] The runtime for finding the fastest route between a node 35 and 77 on a Tuesday at 19 is {fastest_route_complex_grid} seconds.
+           [Square 1000 Nodes] The runtime for finding the fastest route between the node 94 and 864 on a Wednesday at 17 is {fastest_route_complex_square} seconds.
+           [Grid 1000 Nodes] The runtime for finding the fastest route between the node 452 and 134 on a Tuesday at 19 is {fastest_route_complex_grid} seconds.
            \n"""
     )
 
