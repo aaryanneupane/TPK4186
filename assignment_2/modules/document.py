@@ -18,7 +18,10 @@ class Document():
     def get_section(self, index: int) -> Section:
         return self.sections[index]
     
-    def add_section(self, title: str) -> None:
+    def create_section(self, title: str) -> None:
         new_section = Section(title)
         self.sections.append(new_section)
+
+    def add_section(self, section: Section) -> None:
+        self.sections.append(section)
     

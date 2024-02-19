@@ -1,38 +1,42 @@
 from modules.parser import Parser
+from modules.paragraph import Paragraph
 
-markdown_text = '''
-# Sample Markdown Document
-
-This is a sample Markdown document that contains various elements such as headers, lists, emphasis, links, images, and code blocks.
+markdown_text = """
+# Sample Markdown Document 
 
 ## Lists
+Here are some unordered and ordered lists:
 
 ### Unordered List
+Here are a couple of items in an unordered list:
 * Item 1
 * Item 2
-  * Subitem 1
-  * Subitem 2
+* Item 3
+* Item 4
 
 ### Ordered List
+Here are a couple of items in an ordered list:
 1. First item
 2. Second item
 
-## Emphasis
-*This text is italicized.*
-**This text is bold.**
 
-## Links and Images
+## Links and Images (Not Supported yet)
 [Link to example website](https://example.com)
 ![Example Image](https://example.com/image.jpg)
-
-## Code Block"
-'''
+"""
 
 parsed_document = Parser().parse(markdown_text)
 
-print(f"Document Title: {parsed_document.get_title()}")
+print()
+print(f"Document Title: {parsed_document.get_title()}\n")
 for section in parsed_document.get_sections():
     print(f"Section Title: {section.get_title()}")
-    for paragraph in section.get_paragraphs():
-        print(f"Paragraph: {paragraph.get_text()}")
+    for content in section.get_contents():
+        if type(content) == Paragraph:
+            print(f"{type(content)}: {content.get_text()}")
+        else:
+            print(
+                f"{type(content)}: {content.get_list_type()} list {content.get_items()}"
+            )
+
     print()
