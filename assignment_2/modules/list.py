@@ -1,6 +1,5 @@
-
 class List:
-    def __init__(self, list_type, items = []):
+    def __init__(self, list_type, items=[]):
         self.list_type = list_type
         self.items = items
 
@@ -11,10 +10,10 @@ class List:
 
     def get_items(self) -> list:
         return self.items
-    
+
     def get_item(self, index: int) -> str:
         return self.items[index]
-    
+
     def delete_item(self, index: int) -> None:
         self.items.pop(index)
 

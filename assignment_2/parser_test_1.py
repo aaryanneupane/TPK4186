@@ -1,5 +1,7 @@
 from modules.parser import Parser
 from modules.paragraph import Paragraph
+from modules.list import List
+from modules.figure import Figure
 
 markdown_text = """
 # Sample Markdown Document 
@@ -21,7 +23,7 @@ Here are a couple of items in an ordered list:
 
 
 ## Links and Images (Not Supported yet)
-[Link to example website](https://example.com)
+![Link to example website](https://example.com)
 ![Example Image](https://example.com/image.jpg)
 """
 
@@ -34,9 +36,8 @@ for section in parsed_document.get_sections():
     for content in section.get_contents():
         if type(content) == Paragraph:
             print(f"{type(content)}: {content.get_text()}")
-        else:
-            print(
-                f"{type(content)}: {content.get_list_type()} list {content.get_items()}"
-            )
-
-    print()
+        elif type(content) == List:
+            print(f"{type(content)}: {content.get_list_type()} list {content.get_items()}")
+        elif type(content) == Figure:
+            print(f"{type(content)}: Name: {content.get_name()} Path: {content.get_path()}")
+print()

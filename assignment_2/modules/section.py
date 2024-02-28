@@ -1,5 +1,6 @@
 from .paragraph import Paragraph
 from .list import List
+from .figure import Figure
 
 class Section:
     def __init__(self, title: str):
@@ -30,6 +31,8 @@ class Section:
         new_list = List(list_type, items)
         self.contents.append(new_list)
         return self.contents[-1]
-
     
-
+    def add_figure(self, path: str, name: str) -> Figure:
+        new_figure = Figure(path, name)
+        self.contents.append(new_figure)
+        return new_figure
