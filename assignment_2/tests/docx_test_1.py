@@ -18,10 +18,11 @@ Here are a couple of items in an unordered list:
 Here are a couple of items in an ordered list:
 1. First item
 2. Second item
+3. Third item
 """
 
 test_document = Parser().parse(markdown_text)
 
 docx_compiler = DocxCompiler()
 
-docx_compiler.exportDocument(test_document, "Docx Test 1")
+docx_compiler.exportDocument(test_document, "Docx_test_1")

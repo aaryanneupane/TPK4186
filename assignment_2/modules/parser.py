@@ -8,7 +8,7 @@ class Parser:
 
     def parse(self, text) -> Document:
         sections = re.split(
-            r"\n#+\s+", text.strip()
+            r"\n##+\s+", text.strip()
         )  # Split text into sections based on headers
         # Add title
         self.document.set_title(sections[0].strip().split("# ")[1])
@@ -28,7 +28,13 @@ class Parser:
         current_list_items = []
         for line in lines[1:]:
             line = line.strip()
-            if re.match(r"^\s*[*-]\s+", line):
+            if line.startswith('#'):
+                # This line starts with '#', create a new section
+                new_title = line.lstrip('#').strip()
+                new_section = self.parse_section("\n".join([line] + lines[lines.index(line) + 1:]))
+                section.add_section(new_section)
+                break
+            elif re.match(r"^\s*[*-]\s+", line):
                 # This line is a list item for unordered list
                 if not current_list_type or current_list_type == "ol":
                     # Start of a new list or switch from ordered to unordered list

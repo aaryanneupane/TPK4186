@@ -9,7 +9,7 @@ class HTMLcompiler:
         pass
 
     def export(self, document: Document, filename):
-        outputFile = open(filename, "w")
+        outputFile = open(filename + ".html", "w")
         self.printHTML(document, outputFile)
         outputFile.close()
 
@@ -39,7 +39,7 @@ class HTMLcompiler:
                                 outputFile.write("</ol>\n")
                 elif type(content) == Figure:
                         outputFile.write("<figure>")
-                        outputFile.write("<img src=" + content.get_path() + " alt=" + content.get_title() + ">")
+                        outputFile.write("<img src=" + content.get_path() + " alt=" + content.get_name() + ">")
                         outputFile.write("</figure>")     
         outputFile.write("</body>\n")
         outputFile.write("</html>\n")

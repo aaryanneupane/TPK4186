@@ -18,11 +18,14 @@ Here are a couple of items in an unordered list:
 Here are a couple of items in an ordered list:
 1. First item
 2. Second item
-3. Thirds item
+3. Third item
+
+## Images
+![Test_Image](/Users/aaryan/Desktop/6.-Semester/TPK4186/assignment_2/test.jpg)
 """
 
 test_document = Parser().parse(markdown_text)
 
 html_compiler = HTMLcompiler()
 
-html_compiler.export(test_document, "HTML_test_1.html")
+html_compiler.export(test_document, "HTML_test_1")

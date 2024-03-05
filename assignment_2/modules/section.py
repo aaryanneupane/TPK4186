@@ -36,3 +36,6 @@ class Section:
         new_figure = Figure(path, name)
         self.contents.append(new_figure)
         return new_figure
+    
+    def add_section(self, section):
+        self.contents.append(section)
