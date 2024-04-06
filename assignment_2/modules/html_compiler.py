@@ -17,6 +17,7 @@ class HTMLcompiler:
         outputFile.write("<!DOCTYPE html>\n")
         outputFile.write("<html>\n")
         outputFile.write("<head>\n")
+        outputFile.write(f'<link rel="stylesheet" type="text/css" href="assignment_2/modules/styles.css">\n')
         outputFile.write("<title>" + document.get_title() + "</title>\n")
         outputFile.write("</head>\n")
         outputFile.write("<body>\n")

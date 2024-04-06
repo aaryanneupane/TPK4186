@@ -1,0 +1,28 @@
+body {
+    background-color: lightblue;
+  }
+
+h1 {
+    background-color: #f0f0f0; /* Background color */
+    padding: 10px; /* Padding around the text */
+    border: 1px solid #ccc; /* Border */
+    border-radius: 5px; /* Rounded corners */
+    color: #333; /* Text color */
+    margin-bottom: 20px; /* Bottom margin */
+}
+
+/* Style for h2 elements */
+h2 {
+    background-color: #f9f9f9; /* Background color */
+    padding: 8px; /* Padding around the text */
+    border: 1px solid #ddd; /* Border */
+    border-radius: 4px; /* Rounded corners */
+    color: #666; /* Text color */
+    margin-bottom: 15px; /* Bottom margin */
+}
+
+p {
+    margin-bottom: 20px; /* Add bottom margin to separate paragraphs */
+    line-height: 1.5; /* Set line height for better readability */
+    
+}

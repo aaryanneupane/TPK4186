@@ -1,4 +1,4 @@
-from assignment_2.tests.sample_text import sample_text, sample_text_2
+from tests.sample_text import sample_text, sample_text_2
 from modules.parser import Parser
 from modules.html_compiler import HTMLcompiler
 from modules.docx_compiler import DocxCompiler

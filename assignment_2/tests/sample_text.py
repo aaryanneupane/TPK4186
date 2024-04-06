@@ -31,7 +31,7 @@ Bagels from a Local Deli
 Statue of Liberty
   - I snapped a photo of the Statue of Liberty standing tall against the New York skyline. It was a symbol of freedom and a reminder of the city's rich history.
 
-  ![Statue of Liberty](/Users/aaryan/Desktop/6.-Semester/TPK4186/assignment_2/liberty.jpeg)
+  ![Statue of Liberty](assignment_2/test_images/liberty.jpeg)
 
 Brooklyn Bridge
   - Walking across the Brooklyn Bridge offered stunning views of the city skyline. I captured the iconic bridge in the golden hour, creating a memorable photo.
