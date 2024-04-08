@@ -1,10 +1,10 @@
-import product
+from .product import Product
 
 class Shelf:
     def __init__(self) -> None:
         self.shelf = []
 
-    def add_product(self, product: product.Product) -> None:
+    def add_product(self, product:Product) -> None:
         total_weight = 0
         for item in self.shelf:
             total_weight += item.get_weight()
