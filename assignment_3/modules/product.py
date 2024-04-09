@@ -4,6 +4,9 @@ class Product:
         if weight < 2 or weight > 40:
             raise ValueError("Weight must be between 2 and 40")
         self.weight = weight
+    
+    def __str__(self) -> str:
+        return f"Product {self.code} with weight {self.weight}"
 
     def get_code(self) -> str:
         return self.code

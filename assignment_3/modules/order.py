@@ -1,7 +1,7 @@
 from .catalog import catalog
 import random
 
-class order:
+class Order:
     def __init__(self, name:str, catalog:catalog) -> None:
         self.customer = name
         self.catalog = catalog

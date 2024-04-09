@@ -2,9 +2,13 @@ from .product import Product
 
 import random
 
-class catalog:
+class Catalog:
     def __init__(self) -> None:
         self.products = []
+    
+    def __str__(self) -> str:
+        product_codes = [product.get_code() for product in self.products]
+        return f"Catalog with products:\n{product_codes}"
 
     def add_product(self, product: Product) -> None:
         self.products.append(product)
@@ -18,9 +22,22 @@ class catalog:
                 return product
         return None
 
-    def generate_random_catalog(self, num_products: int) -> None:
+    def generate_random_catalog(self, num_products:int) -> None:
         for _ in range(num_products):
             code = ''.join(random.choices("ABCDEFGHIJKLMNOPQRSTUVWXYZ", k=6))
-            weight = random.randint(2, 40)
+            
+            weight = self.random_weight()
             product = Product(code, weight)
             self.add_product(product)
+
+    def random_weight(self) -> int:
+        if random.random() < 0.8:
+            return random.randint(2, 9)
+        else:
+            return random.randint(10, 40)
+
+    def get_products(self) -> list:
+        return self.products
+
+    def get_random_product(self) -> Product:
+        return random.choice(self.products) if self.products else None

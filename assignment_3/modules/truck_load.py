@@ -1,8 +1,8 @@
 from .product import Product
 
-class Truck_Delivery:
-    def __init__(self, delivery_num:str,  max_cap:int = 20 * 1000):
-        self.delivery_num = delivery_num
+class Truck_Load:
+    def __init__(self, delivery_number:str,  max_cap:int = 20 * 1000):
+        self.delivery_number = delivery_number
         self.max_cap = max_cap
         self.products = dict()
         self.current_weight = self.calculate_weight()
