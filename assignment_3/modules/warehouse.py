@@ -1,11 +1,11 @@
 import numpy as np
-from .cell import Storage_Cell, Route_Cell, Loading_Cell, Unloading_Cell
+from .cell import Storage_Cell, Route_Cell, Loading_Cell, Unloading_Cell, Empty_Cell
 
 
 class Warehouse:
-    def __init__(self, height:int, length:int) -> None:
-        self.height = height 
-        self.length = length + 1  # Add 1 to the length to account for the extra column
+    def __init__(self, ally_number:int, ally_size:int) -> None:
+        self.height = ally_size * 2 + 4
+        self.length = ally_number * 6 + 1  # Add 1 to the length to account for the extra column
         self.grid = np.empty((self.height, self.length), dtype=object)  # Initialize an empty grid of objects
         self.generate_warehouse_layout()
 
@@ -31,7 +31,7 @@ class Warehouse:
     def generate_warehouse_layout(self):
     # Intialize first column to be none
         for i in range(self.height):
-            self.grid[i][0] = None
+            self.grid[i][0] = Empty_Cell((i, 0))
     # Create loading and unloading cells
         loading_cell_pos = self.height // 2 
         self.add_cell("loading", (loading_cell_pos - 1, 0))
@@ -43,9 +43,27 @@ class Warehouse:
             self.add_cell("storage", (i, self.length - 1))
             self.add_cell("storage", (self.height - i-1, self.length - 1))    
 
+    # Create storage cells in the middle
+        skip_columns = 4
+        storage_columns = 2
+        column_spacing = skip_columns + storage_columns
+        
+        for i in range(loading_cell_pos - 2):
+            for j in range(skip_columns + 1, self.length - 2, column_spacing):
+                for k in range(storage_columns):
+                    self.add_cell("storage", (i, j + k + 1))
+                    self.add_cell("storage", (self.height - i - 1, j + k + 1))
+
+    # Create route cells
+        for i in range(self.height):
+            for j in range(self.length):
+                if self.grid[i][j] is None:
+                    self.add_cell("route", (i, j))
+
+
     def is_valid_position(self, position: tuple) -> bool:
         x, y = position
-        return 0 <= x < self.height and 0 <= y < self.length
+        return 0 <= x < self.height and 0 <= y < self.length 
 
     def print_warehouse_layout(self):
         for row in self.grid:

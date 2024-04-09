@@ -7,7 +7,8 @@ class Cell:
         self.type = type
 
     def __str__(self) -> str:
-        return f"({self.type} {self.position[1]}, {self.position[0] + 1})"  # Switch in the end for the wanted format in the task
+        #return f"( {self.type} {self.position[1]}, {self.position[0] + 1})"  # Switch in the end for the wanted format in the task
+        return f"({self.type})"
 
 
 class Storage_Cell(Cell):
@@ -22,7 +23,7 @@ class Storage_Cell(Cell):
 
 
 class Route_Cell(Cell):
-    def __init__(self, position: tuple, type: str = "RC") -> None:
+    def __init__(self, position: tuple, type: str = "rc") -> None:
         super().__init__(position, type)
         self.position = position
 
@@ -41,6 +42,14 @@ class Loading_Cell(Cell):
 
 class Unloading_Cell(Cell):
     def __init__(self, position: tuple, type: str = "UC") -> None:
+        super().__init__(position, type)
+        self.position = position
+
+    def __str__(self) -> str:
+        return super().__str__()
+
+class Empty_Cell(Cell):
+    def __init__(self, position: tuple, type: str = "o") -> None:
         super().__init__(position, type)
         self.position = position
 
