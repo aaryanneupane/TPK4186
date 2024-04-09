@@ -7,7 +7,8 @@ class Warehouse:
         self.height = ally_size * 2 + 4
         self.length = ally_number * 6 + 1  # Add 1 to the length to account for the extra column
         self.grid = np.empty((self.height, self.length), dtype=object)  # Initialize an empty grid of objects
-        self.generate_warehouse_layout()
+        self.generate_warehouse()
+        
 
     def add_cell(self, cell_type: str, position: tuple):
         if not self.is_valid_position(position):
@@ -71,7 +72,9 @@ class Warehouse:
                 print(cell or "empty", end=" ")  # Print the cell or empty space if cell is None
             print()  # Move to the next row
     
-    def print_dawg(self):
-        print(self.grid)
+    def generate_warehouse(self):
+        self.generate_warehouse_layout()
+        
+
 
         
