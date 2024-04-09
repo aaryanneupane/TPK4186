@@ -4,9 +4,9 @@ from .cell import Storage_Cell, Route_Cell, Loading_Cell, Unloading_Cell
 
 class Warehouse:
     def __init__(self, height:int, length:int) -> None:
-        self.height = height
+        self.height = height 
         self.length = length + 1  # Add 1 to the length to account for the extra column
-        self.grid = np.empty((height, length), dtype=object)  # Initialize an empty grid of objects
+        self.grid = np.empty((self.height, self.length), dtype=object)  # Initialize an empty grid of objects
         self.generate_warehouse_layout()
 
     def add_cell(self, cell_type: str, position: tuple):
@@ -33,14 +33,15 @@ class Warehouse:
         for i in range(self.height):
             self.grid[i][0] = None
     # Create loading and unloading cells
-        loading_cell_pos = self.height // 2
-        self.add_cell("loading", (loading_cell_pos, 0))
-        self.add_cell("unloading", (loading_cell_pos + 1, 0))
-    # Create storage cells on the first wall
-        for i in range(1, self.length - 1):
-            for j in range(self.height):
-                self.add_cell("storage", (j, i))
-    
+        loading_cell_pos = self.height // 2 
+        self.add_cell("loading", (loading_cell_pos - 1, 0))
+        self.add_cell("unloading", (loading_cell_pos, 0))
+    # Create storage cells on the first and last wall
+        for i in range(loading_cell_pos - 2):
+            self.add_cell("storage", (i, 1))
+            self.add_cell("storage", (self.height - i-1, 1))
+            self.add_cell("storage", (i, self.length - 1))
+            self.add_cell("storage", (self.height - i-1, self.length - 1))    
 
     def is_valid_position(self, position: tuple) -> bool:
         x, y = position
