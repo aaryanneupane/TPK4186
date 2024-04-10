@@ -3,6 +3,7 @@ from .cell import Cell, Storage_Cell, Route_Cell, Loading_Cell, Unloading_Cell, 
 from .catalog import Catalog
 from .product import Product
 from .robot import Robot
+from .order import Order
 
 
 hardcoded_catalog = Catalog()
@@ -116,9 +117,11 @@ class Warehouse:
                         if shelf.get_product().get_code() == product.get_code():
                             return cell
         raise ValueError("No storage cell contains this product")
-    def add_order_to_warehouse(self):
-        order = self.order.generate_random_order()
-        self.orders.append(order.get_order_number())
+    
+    def add_order_to_warehouse(self, name:str):
+        new_order = Order(name, self.catalog)  # Assuming you have 'name' and 'catalog' defined somewhere
+        new_order.generate_random_order()
+        self.orders.append(new_order)
         
                     
     def generate_robots(self):
@@ -127,6 +130,8 @@ class Warehouse:
         for robot in self.robots:
             robot.current_pos = self.grid[self.height // 2 - 1][0]
             self.grid[self.height // 2 - 1][0].add_robot(robot)
+            
+    
 
     def generate_warehouse(self):
         self.generate_warehouse_layout()
@@ -160,6 +165,9 @@ class Warehouse:
     
     def get_unloading_cell(self) -> Unloading_Cell:
         return self.grid[self.height // 2][0]
+    
+    def get_order_list(self) -> list:
+        return self.orders
 
     def calculate_route_to_storage_cell(self, cell: Cell) -> list[Cell]:
         """
