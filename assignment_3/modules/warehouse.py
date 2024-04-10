@@ -5,6 +5,19 @@ from .product import Product
 from .robot import Robot
 
 
+hardcoded_catalog = Catalog()
+hardcoded_catalog.add_product(Product("Anne", 2))
+hardcoded_catalog.add_product(Product("Bob", 9))
+hardcoded_catalog.add_product(Product("Man", 4))
+hardcoded_catalog.add_product(Product("Dog", 3))
+hardcoded_catalog.add_product(Product("Cat", 2))
+hardcoded_catalog.add_product(Product("Rat", 7))
+hardcoded_catalog.add_product(Product("Hat", 5))
+hardcoded_catalog.add_product(Product("Mat", 6))
+hardcoded_catalog.add_product(Product("Bat", 7))
+hardcoded_catalog.add_product(Product("Fat", 8))
+
+
 class Warehouse:
     def __init__(self, ally_number:int, ally_size:int, num_products:int, num_robots:Robot) -> None:
         self.height = ally_size * 2 + 4
@@ -15,9 +28,11 @@ class Warehouse:
         self.max_product_types = (ally_size * 2 + (ally_number - 1) * 2 * ally_size) * 4
         if num_products > self.max_product_types:
             raise ValueError("There cannot be more different products than available shelves")
-        self.catalog = Catalog()
-        self.catalog.generate_random_catalog(num_products)
+        #self.catalog = Catalog()
+        self.catalog = hardcoded_catalog
+        #self.catalog.generate_random_catalog(num_products)
         self.generate_warehouse()
+        self.orders = []
         
 
     def add_cell(self, cell_type: str, position: tuple):
@@ -91,6 +106,20 @@ class Warehouse:
                 cell = self.grid[i][j]
                 if isinstance(cell, Storage_Cell):
                     cell.populate_shelves(self.catalog)
+    
+    def find_storage_cell(self, product: Product) -> Storage_Cell:
+        for i in range(self.height):
+            for j in range(self.length):
+                cell = self.grid[i][j]
+                if isinstance(cell, Storage_Cell):
+                    for shelf in cell.shelves:
+                        if shelf.get_product().get_code() == product.get_code():
+                            return cell
+        raise ValueError("No storage cell contains this product")
+    def add_order_to_warehouse(self):
+        order = self.order.generate_random_order()
+        self.orders.append(order.get_order_number())
+        
                     
     def generate_robots(self):
         for i in range(self.num_robots):
@@ -107,6 +136,9 @@ class Warehouse:
 
     def get_catalog_products(self) -> list[Product]:
         return self.catalog.get_products()
+    
+    def get_catalog(self) -> Catalog:
+        return self.catalog
 
     def get_warehouse_height(self):
         return self.height

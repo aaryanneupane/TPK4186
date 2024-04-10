@@ -1,10 +1,9 @@
 from .product import Product
 
 import random
-
 class Catalog:
     def __init__(self) -> None:
-        self.products = []
+        self.products: list[Product] = []
     
     def __str__(self) -> str:
         product_codes = [product.get_code() for product in self.products]
@@ -41,3 +40,9 @@ class Catalog:
 
     def get_random_product(self) -> Product:
         return random.choice(self.products) if self.products else None
+    
+    def get_product_by_code(self, code:str) -> Product:
+        for product in self.products:
+            if product.get_code() == code:
+                return product
+        return None
