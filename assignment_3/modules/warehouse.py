@@ -7,16 +7,16 @@ from .order import Order
 
 
 hardcoded_catalog = Catalog()
-hardcoded_catalog.add_product(Product("Anne", 2))
-hardcoded_catalog.add_product(Product("Bob", 9))
-hardcoded_catalog.add_product(Product("Man", 4))
-hardcoded_catalog.add_product(Product("Dog", 3))
-hardcoded_catalog.add_product(Product("Cat", 2))
-hardcoded_catalog.add_product(Product("Rat", 7))
-hardcoded_catalog.add_product(Product("Hat", 5))
-hardcoded_catalog.add_product(Product("Mat", 6))
-hardcoded_catalog.add_product(Product("Bat", 7))
-hardcoded_catalog.add_product(Product("Fat", 8))
+hardcoded_catalog.add_product(Product("Nail", 2))
+hardcoded_catalog.add_product(Product("Wooden Plank", 9))
+hardcoded_catalog.add_product(Product("Screwdriver", 4))
+hardcoded_catalog.add_product(Product("White Paint", 3))
+hardcoded_catalog.add_product(Product("Black Paint", 2))
+hardcoded_catalog.add_product(Product("Paper Sheet", 7))
+hardcoded_catalog.add_product(Product("Fish Hooks", 5))
+hardcoded_catalog.add_product(Product("Ducktape", 6))
+hardcoded_catalog.add_product(Product("Rope", 7))
+hardcoded_catalog.add_product(Product("Pocket Knife", 8))
 
 
 class Warehouse:
@@ -166,7 +166,7 @@ class Warehouse:
     def get_unloading_cell(self) -> Unloading_Cell:
         return self.grid[self.height // 2][0]
     
-    def get_order_list(self) -> list:
+    def get_order_list(self) -> list[Order]:
         return self.orders
 
     def calculate_route_to_storage_cell(self, cell: Cell) -> list[Cell]:
