@@ -16,6 +16,9 @@ class Order:
         
     def __str__(self) -> str:
         return f"Order {self.order_number} by {self.customer}: {self.quantity} piece(s) of {self.product}"
+
+    def __repr__(self) -> str:
+        return str(self)
     
     def get_customer(self) -> str:
         return self.customer

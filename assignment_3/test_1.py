@@ -10,5 +10,5 @@ new_printer.print_catalog()
 new_printer.print_cell((1, 1))
 # print(new_warehouse.get_cell((4, 0)).get_available_robots())
 
-for route in new_warehouse.calculate_route(new_warehouse.get_cell((9, 6))):
+for route in new_warehouse.calculate_route_to_storage_cell(new_warehouse.get_cell((9, 6))):
     print(route)
