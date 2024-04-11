@@ -13,6 +13,9 @@ class Cell:
         return f"({self.position[0]}, {self.position[1]})" # For development purposes
         #return f"({self.position[1]}, {self.position[0] + 1})"
 
+    def __repr__(self) -> str:
+        return str(self)
+
     def get_position(self) -> tuple:
         return self.position
     
@@ -64,10 +67,11 @@ class Loading_Cell(Cell):
         self.available_robots = []
 
     def __str__(self) -> str:
+        #return f"({self.position[0]}, {self.position[1]}) with available robots: {len(self.available_robots)}"
         return super().__str__()
 
     def get_available_robots(self) -> int:
-        return len(self.available_robots)
+        return self.available_robots
 
     def add_robot(self, robot) -> None:
         self.available_robots.append(robot)

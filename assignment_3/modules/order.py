@@ -16,8 +16,6 @@ class Order:
     def set_name(self, new_name:str) -> None:
         self.code = new_name
 
-
-
     def generate_random_order(self, num_products: int) -> None:
         for i in range(num_products):
             item = random.choice(self.get_catalog.products)

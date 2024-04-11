@@ -251,3 +251,19 @@ class Warehouse:
             route_back.append(self.grid[current_position[0]][_])  # Append the current cell to the route
 
         return route_back
+
+    def generate_objective(self, robot:Robot, cell:Cell):
+        route_to_cell = self.calculate_route_to_storage_cell(cell)
+        route_back = self.calculate_route_back_to_loading_cell(cell)
+        robot.set_route(route_to_cell)
+        robot.set_route_back(route_back)
+        robot.set_target_cell(cell)
+        
+
+    def get_available_robot(self) -> Robot:
+        available_robots = self.get_loading_cell().get_available_robots()
+        if len(available_robots) > 0:
+            return available_robots[0]
+        else:
+            ValueError("No available robots in the loading cell")
+            
