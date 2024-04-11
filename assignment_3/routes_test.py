@@ -11,7 +11,7 @@ new_printer.print_warehouse()
 # print(new_warehouse.get_cell((4, 0)).get_available_robots())
 
 to_storage = new_warehouse.calculate_route_to_storage_cell(
-    new_warehouse.get_cell((13, 19))
+    new_warehouse.get_cell((1, 19))
 )
 
 for route in to_storage:
