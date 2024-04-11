@@ -39,6 +39,9 @@ class Storage_Cell(Cell):
             if product is not None:
                 while shelf.remaining_capacity() >= product.weight:
                     shelf.add_product(product)
+    
+    def get_shelves(self) -> list[Shelf]:
+        return self.shelves
 
 
 class Route_Cell(Cell):
@@ -48,9 +51,10 @@ class Route_Cell(Cell):
         self.occupied = False
 
     def __str__(self) -> str:
-        return super().__str__()
+        #return super().__str__()
+        return f"({self.position[0]}, {self.position[1]}) with occupied status: {self.occupied}" #For robot movement testing
     
-    def is_occupied(self) -> bool:
+    def get_status(self) -> bool:
         return self.occupied
     
     def set_occupied(self) -> None:

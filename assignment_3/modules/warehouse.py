@@ -145,6 +145,9 @@ class Warehouse:
     def get_catalog(self) -> Catalog:
         return self.catalog
 
+    def get_product_by_code(self, code: str) -> Product:
+        return self.catalog.get_product_by_code(code)
+
     def get_warehouse_height(self):
         return self.height
     
@@ -298,6 +301,7 @@ class Warehouse:
         robot.set_route(route_to_cell)
         robot.set_route_back(route_back)
         robot.set_target_cell(cell)
+        return route_to_cell, route_back
         
 
     def get_available_robot(self) -> Robot:
@@ -306,4 +310,24 @@ class Warehouse:
             return available_robots[0]
         else:
             ValueError("No available robots in the loading cell")
-            
+
+    def move_robot(self, robot:Robot, route:list[Cell]):
+        previous_cell: Route_Cell = None
+        for cell in route:
+            robot.move(cell)
+            if previous_cell:
+                print(f"The state of the previous cell {previous_cell.get_position()} is now: {previous_cell.get_status()}\n")
+            else:
+                print() 
+            previous_cell = cell
+    
+
+    def fetch_product(self, robot:Robot, cell:Cell, quantity:int):
+        route_to_cell, route_back = self.generate_objective(robot, cell)
+        #print(f"Route to cell: {route_to_cell}\n")
+        self.move_robot(robot, route_to_cell)
+        robot.load_product(quantity)
+        self.move_robot(robot, route_back)
+        robot.unload_product()
+        print(f"Robot number {robot.get_robot_id()} used {robot.get_objective_time()} seconds to complete the task\n")
+        robot.reset_objective_time()

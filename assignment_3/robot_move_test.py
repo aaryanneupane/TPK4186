@@ -20,4 +20,7 @@ available_robot = new_warehouse.get_available_robot()
 storage_cell = new_warehouse.get_cell((0, 6))
 new_warehouse.generate_objective(available_robot, storage_cell)
 
-print(available_robot)
+#print(available_robot)
+
+new_warehouse.move_robot(available_robot)
+
