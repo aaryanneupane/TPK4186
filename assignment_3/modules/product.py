@@ -6,7 +6,7 @@ class Product:
         self.weight = weight
     
     def __str__(self) -> str:
-        return f"Product {self.code} with weight {self.weight}"
+        return f"product name {self.code} with weight {self.weight}"
 
     def get_code(self) -> str:
         return self.code
