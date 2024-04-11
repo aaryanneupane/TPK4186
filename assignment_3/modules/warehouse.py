@@ -4,6 +4,7 @@ from .catalog import Catalog
 from .product import Product
 from .robot import Robot
 from .order import Order
+from .truck_load import Truck_Load
 
 
 hardcoded_catalog = Catalog()
@@ -34,6 +35,9 @@ class Warehouse:
         #self.catalog.generate_random_catalog(num_products)
         self.generate_warehouse()
         self.orders = []
+        self.order_weight = 0
+        self.count_orders_for_truckload = 0
+        
         
 
     def add_cell(self, cell_type: str, position: tuple):
@@ -121,7 +125,20 @@ class Warehouse:
     def add_order_to_warehouse(self, name:str):
         new_order = Order(name, self.catalog)  # Assuming you have 'name' and 'catalog' defined somewhere
         new_order.generate_random_order()
+        #we have not checked if the product is in
+        if self.order_weight>=(400-new_order.get_weight()):
+            truck_load = Truck_Load(400)
+            truck_order_list = self.orders[-(self.count_orders_for_truckload):] 
+            truck_load.generate_truck_load(truck_order_list)
+            self.order_weight = 0
+            self.count_orders_for_truckload = 0
         self.orders.append(new_order)
+        self.order_weight += new_order.get_weight()
+        self.count_orders_for_truckload +=1 
+        
+        
+
+   
         
                     
     def generate_robots(self):
@@ -138,6 +155,11 @@ class Warehouse:
         self.populate_shelves()
         self.generate_robots()
             
+    def get_order_weight(self):
+        return self.order_weight
+    
+    def get_count_orders_for_truckload(self) -> int:
+        return self.count_orders_for_truckload
 
     def get_catalog_products(self) -> list[Product]:
         return self.catalog.get_products()
