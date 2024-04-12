@@ -1,5 +1,5 @@
 from modules.simulator import Simulator
 
-sim = Simulator(100000)
+sim = Simulator(50000)
 
 sim.execute_simulation_loop()

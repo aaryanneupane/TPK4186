@@ -28,23 +28,39 @@ class Storage_Cell(Cell):
 
     def __init__(self, position: tuple, type: str = "SC") -> None:
         super().__init__(position, type)
-        self.shelves = []
-        for i in range(1):
+        self.shelves: list[Shelf] = []
+        for i in range(2):
             self.shelves.append(Shelf())
 
     def __str__(self) -> str:
-        return super().__str__()
+        # return super().__str__()
+        return f"({self.position[0]}, {self.position[1]}) with {len(self.shelves)} shelves"  # For robot movement testing
+
+    # def populate_shelves(self, catalog: Catalog):
+    #     for shelf in self.shelves:
+    #         product = catalog.get_products()[Storage_Cell.catalog_count]
+    #         if product is not None:
+    #             while shelf.remaining_capacity() >= product.weight:
+    #                 shelf.add_product(product)
+    #     if Storage_Cell.catalog_count == len(catalog.get_products()) - 1:
+    #         Storage_Cell.catalog_count = 0
+    #     Storage_Cell.catalog_count += 1
 
     def populate_shelves(self, catalog: Catalog):
         for shelf in self.shelves:
-            print(Storage_Cell.catalog_count)
             product = catalog.get_products()[Storage_Cell.catalog_count]
-        if Storage_Cell.catalog_count == len(catalog.get_products()) - 1:
-            Storage_Cell.catalog_count = 0
-        Storage_Cell.catalog_count += 1
-        if product is not None:
-            while shelf.remaining_capacity() >= product.weight:
-                shelf.add_product(product)
+            if Storage_Cell.catalog_count == len(catalog.get_products()) - 1:
+                Storage_Cell.catalog_count = 0
+            Storage_Cell.catalog_count += 1
+            if product is not None:
+                while shelf.remaining_capacity() >= product.weight:
+                    shelf.add_product(product)
+                    # Add the same product to the other shelf in the cell
+                    other_shelf_index = (self.shelves.index(shelf) + 1) % len(
+                        self.shelves
+                    )
+                    other_shelf = self.shelves[other_shelf_index]
+                    other_shelf.add_product(product)
 
     def get_shelves(self) -> list[Shelf]:
         return self.shelves

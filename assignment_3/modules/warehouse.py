@@ -1,12 +1,5 @@
 import numpy as np
-from .cell import (
-    Cell,
-    Storage_Cell,
-    Route_Cell,
-    Loading_Cell,
-    Unloading_Cell,
-    Empty_Cell,
-)
+from .cell import *
 from .catalog import Catalog
 from .product import Product
 from .robot import Robot
@@ -137,6 +130,7 @@ class Warehouse:
                     for shelf in cell.get_shelves():
                         if shelf.get_product() == product:
                             return cell
+        return None
         raise ValueError("No storage cell contains this product")
 
     def add_order_to_warehouse(self, name: str):
@@ -439,13 +433,13 @@ class Warehouse:
         return completed_time
 
     def handle_order(self, robot: Robot, order: Order) -> None:
-        print(
-            f"Robot {robot.get_robot_id()} is handling order {order.get_order_number()}\n"
-        )
+        print(f"Robot {robot.get_robot_id()} is handling order {order.get_order_number()}\n")
         self.remove_robot_from_loading_cell(robot)
         product = order.get_product()
         quantity = order.get_quantity()
         storage_cell = self.find_storage_cell(product)
+        if storage_cell is None:
+            return None
         route_to_cell, route_back = self.generate_objective(robot, storage_cell)
         robot.set_route(route_to_cell)
         robot.set_second_last_cell(route_to_cell[-1])
@@ -481,8 +475,20 @@ class Warehouse:
 
         if len(self.remaining_orders) > 0:
             robot = self.get_available_robot()
-
             if robot is None:
                 return
-            self.handle_order(robot, self.remaining_orders[0])
+            no_stock = self.handle_order(robot, self.remaining_orders[0])
+            if no_stock:
+                self.canceled_orders.append(self.remaining_orders.pop())
+                self.add_available_robot(robot)
             self.remaining_orders.pop()
+
+    def print_all_storage_cells(self):
+        for i in range(self.height):
+            for j in range(self.length):
+                cell = self.grid[i][j]
+                if isinstance(cell, Storage_Cell):
+                    print(cell)
+                    for shelf in cell.get_shelves():
+                        print(shelf)
+                    print()
