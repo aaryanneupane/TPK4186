@@ -20,7 +20,7 @@ class Order:
         return str(self)
     
     def __repr__(self) -> str:
-        return f"{self.order_number} by {self.customer}"
+        return f"{self.order_number} by {self.customer} of {self.product}"
         
     def get_customer(self) -> str:
         return self.customer

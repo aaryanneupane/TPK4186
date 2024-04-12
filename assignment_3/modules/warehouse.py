@@ -39,7 +39,7 @@ class Warehouse:
             (self.height, self.length), dtype=object
         )  # Initialize an empty grid of objects
         self.num_robots = num_robots
-        self.robots = []
+        self.robots: list[Robot] = []
         self.max_product_types = (ally_size * 2 + (ally_number - 1) * 2 * ally_size) * 4
         if num_products > self.max_product_types:
             raise ValueError(
@@ -378,8 +378,12 @@ class Warehouse:
         available_robots = self.get_loading_cell().get_available_robots()
         if len(available_robots) > 0:
             return available_robots[0]
-        else:
-            ValueError("No available robots in the loading cell")
+    
+    def remove_robot_from_loading_cell(self, robot: Robot):
+        self.get_loading_cell().remove_robot(robot)
+
+    def add_available_robot(self, robot: Robot):
+        self.get_loading_cell().add_robot(robot)
 
     def move_robot(self, robot: Robot, route: list[Cell]):
         previous_cell: Route_Cell = None
@@ -434,24 +438,20 @@ class Warehouse:
         robot.reset_objective_time()
         return completed_time
 
-    def handle_order(self, order: Order) -> None:
+    def handle_order(self, robot:Robot, order: Order) -> None:
+        print(f"Robot {robot.get_robot_id()} is handling order {order.get_order_number()}\n")
+        self.remove_robot_from_loading_cell(robot)
         product = order.get_product()
         quantity = order.get_quantity()
         storage_cell = self.find_storage_cell(product)
-        robot = self.get_available_robot()
-        while self.get_available_robot() == None:
-            robot = self.get_available_robot()
         route_to_cell, route_back = self.generate_objective(robot, storage_cell)
-        self.move_robot(robot, route_to_cell)
-        robot.load_product(quantity)
-        self.move_robot(robot, route_back)
-        completed_time = robot.get_objective_time()
-        print(
-            f"Robot number {robot.get_robot_id()} used {robot.get_objective_time()} seconds to complete the task\n"
-        )
-        robot.reset_objective_time()
-        self.completed_orders[order] = completed_time
-        self.remaining_orders.remove(order)
+        robot.set_route(route_to_cell)
+        robot.set_second_last_cell(route_to_cell[-1])
+        robot.set_route_back(route_back)
+        robot.set_fetch_quantity(quantity)
+        robot.set_objective(True)
+        robot.set_order(order)
+        robot.set_current_state("Moving")
 
     # def handle_truck_load(self, truck_loads: list):
     #     for truck_load in truck_loads:
@@ -466,3 +466,21 @@ class Warehouse:
     #             if truck_load[product] == 0:
     #                 del truck_load[product]
     #         truck_loads.remove(truck_load)
+
+    def handle_next_time_step(self):
+        for robot in self.robots:
+            time = robot.do_next_action()
+            if time:
+                self.add_available_robot(robot)
+                current_order = robot.get_order()
+                self.completed_orders[current_order] = time
+                robot.set_order(None)
+                robot.set_objective_time(0)
+
+        if len(self.remaining_orders) > 0:
+            robot = self.get_available_robot()
+
+            if robot is None:
+                return   
+            self.handle_order(robot, self.remaining_orders[-1])
+            self.remaining_orders.pop()
