@@ -18,14 +18,3 @@ class Simulator:
                 order_name = random.choice(Simulator.client_list)
                 warehouse.add_order_to_warehouse(order_name)
             self.current_time+=1
-            #for robot in robots:
-                #robot.set_global_state()
-                #robot.get_current_pos()
-           
-
-   
-
-  
-    
-
-    
