@@ -1,7 +1,6 @@
 from .shelf import Shelf
 from .catalog import Catalog
 
-
 class Cell:
     def __init__(self, position: tuple, type: str) -> None:
         self.position = position
@@ -21,7 +20,6 @@ class Cell:
     
     def get_type(self) -> str:
         return self.type
-
 
 class Storage_Cell(Cell):
     def __init__(self, position: tuple, type: str = "SC") -> None:
@@ -43,7 +41,6 @@ class Storage_Cell(Cell):
     def get_shelves(self) -> list[Shelf]:
         return self.shelves
 
-
 class Route_Cell(Cell):
     def __init__(self, position: tuple, type: str = "rc") -> None:
         super().__init__(position, type)
@@ -63,7 +60,6 @@ class Route_Cell(Cell):
     def set_unoccupied(self) -> None:
         self.occupied = False
 
-
 class Loading_Cell(Cell):
     def __init__(self, position: tuple, type: str = "LC") -> None:
         super().__init__(position, type)
@@ -82,9 +78,6 @@ class Loading_Cell(Cell):
     
     def remove_robot(self, robot) -> None:
         self.available_robots.remove(robot)
-    
-
-
 
 class Unloading_Cell(Cell):
     def __init__(self, position: tuple, type: str = "UC") -> None:

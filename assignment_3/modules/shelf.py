@@ -15,7 +15,7 @@ class Shelf:
         total_weight = 0
         for item in self.product:
             total_weight += item.get_weight()
-        if total_weight + product.get_weight() > 100:
+        if total_weight + product.get_weight() > 1000000:
             raise ValueError("Shelf is full")
         self.product.append(product)
     

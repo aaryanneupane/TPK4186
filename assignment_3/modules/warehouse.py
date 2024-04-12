@@ -5,6 +5,8 @@ from .product import Product
 from .robot import Robot
 from .order import Order
 from .truck_load import Truck_Load
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
 
 
 hardcoded_catalog = Catalog()
@@ -18,7 +20,6 @@ hardcoded_catalog.add_product(Product("Fish Hooks", 5))
 hardcoded_catalog.add_product(Product("Ducktape", 6))
 hardcoded_catalog.add_product(Product("Rope", 7))
 hardcoded_catalog.add_product(Product("Pocket Knife", 8))
-
 
 class Warehouse:
     def __init__(self, ally_number:int, ally_size:int, num_products:int, num_robots:Robot) -> None:
@@ -35,10 +36,12 @@ class Warehouse:
         #self.catalog.generate_random_catalog(num_products)
         self.generate_warehouse()
         self.orders = []
+        self.remaining_orders = []
+        self.canceled_orders = []
+        self.completed_orders = {}
         self.order_weight = 0
         self.count_orders_for_truckload = 0
-        
-        
+        self.truck_loads = []
 
     def add_cell(self, cell_type: str, position: tuple):
         if not self.is_valid_position(position):
@@ -96,13 +99,46 @@ class Warehouse:
         x, y = position
         return 0 <= x < self.height and 0 <= y < self.length 
 
+    # def print_warehouse_layout(self):
+    #     print("Warehouse layout:")
+    #     for row in self.grid:
+    #         for cell in row:
+    #             print(cell or "empty", end=" ")  # Print the cell or empty space if cell is None
+    #         print()  # Move to the next row
+    #     print()
+
     def print_warehouse_layout(self):
-        print("Warehouse layout:")
-        for row in self.grid:
-            for cell in row:
-                print(cell or "empty", end=" ")  # Print the cell or empty space if cell is None
-            print()  # Move to the next row
-        print()
+        # Define a dictionary to map cell types to numbers
+        cell_type_to_num = {Empty_Cell: 0, Loading_Cell: 1, Unloading_Cell: 2, Storage_Cell: 3, Route_Cell: 4}
+
+        # Convert the grid to a numerical grid
+        numerical_grid = [[cell_type_to_num[type(cell)] for cell in row] for row in self.grid]
+
+        # Display the grid as an image
+        plt.imshow(numerical_grid, cmap='tab10')
+        plt.xticks(range(self.length), range(self.length))
+        plt.yticks(range(self.height), range(self.height))
+        plt.grid(True)
+        plt.colorbar(ticks=range(5), label='Cell types')
+        plt.show()
+    
+    def animate_warehouse(self):
+        fig, ax = plt.subplots()
+        cell_type_to_color = {Empty_Cell: 'white', Loading_Cell: 'blue', Unloading_Cell: 'green', Storage_Cell: 'gray', Route_Cell: 'black'}
+        def update(frame):
+            ax.clear()
+            for i in range(self.height):
+                for j in range(self.length):
+                    cell = self.grid[i][j]
+                    color = cell_type_to_color[type(cell)]
+                    ax.add_patch(plt.Rectangle((j, i), 1, 1, color=color, edgecolor='black'))
+            for robot in self.robots:
+                ax.add_patch(plt.Circle((robot.current_pos.position[1] + 0.5, robot.current_pos.position[0] + 0.5), 0.4, color='red'))
+            plt.xlim(0, self.length)
+            plt.ylim(0, self.height)
+            plt.gca().set_aspect('equal', adjustable='box')
+        ani = FuncAnimation(fig, update, frames=range(10), repeat=True)
+        plt.show()
     
     
     def populate_shelves(self):
@@ -136,10 +172,10 @@ class Warehouse:
         self.order_weight += new_order.get_weight()
         self.count_orders_for_truckload +=1 
         
-        
-
-   
-        
+    def add_truck_load_to_warehouse(self):
+        new_truck_load = Truck_Load()
+        new_truck_load.generate_random_truck_load(self.catalog)
+        self.truck_loads.append(new_truck_load)
                     
     def generate_robots(self):
         for i in range(self.num_robots):
@@ -147,8 +183,6 @@ class Warehouse:
         for robot in self.robots:
             robot.current_pos = self.grid[self.height // 2 - 1][0]
             self.grid[self.height // 2 - 1][0].add_robot(robot)
-            
-    
 
     def generate_warehouse(self):
         self.generate_warehouse_layout()
@@ -193,6 +227,15 @@ class Warehouse:
     
     def get_order_list(self) -> list[Order]:
         return self.orders
+    
+    def get_completed_order_list(self) -> list[Order]:
+        return self.completed_orders
+
+    def get_remaining_orders(self) -> list[Order]:
+        return self.remaining_orders
+
+    def get_truck_loads(self) -> list[Truck_Load]:
+        return self.truck_loads
 
     def calculate_route_to_storage_cell(self, cell: Cell) -> list[Cell]:
         """
@@ -262,7 +305,6 @@ class Warehouse:
         elif destination[1] < route[-1].get_position()[1]:
             route.append(self.grid[route[-1].get_position()[0]][route[-1].get_position()[1] - 1])
 
-
         return route
 
     def calculate_route_back_to_loading_cell(self, cell: Cell) -> list[Cell]:
@@ -324,7 +366,6 @@ class Warehouse:
         robot.set_route_back(route_back)
         robot.set_target_cell(cell)
         return route_to_cell, route_back
-        
 
     def get_available_robot(self) -> Robot:
         available_robots = self.get_loading_cell().get_available_robots()
@@ -333,16 +374,42 @@ class Warehouse:
         else:
             ValueError("No available robots in the loading cell")
 
-    def move_robot(self, robot:Robot, route:list[Cell]):
-        previous_cell: Route_Cell = None
+    def move_robot(self, robot: Robot, route: list[Cell]):
+        fig, ax = plt.subplots()
+        numerical_grid = self.convert_grid_to_numerical()  # Convert the grid to numerical format
+        ax.imshow(numerical_grid, cmap='tab10')
+        ax.set_xticks(range(self.length))
+        ax.set_yticks(range(self.height))
+        ax.grid(True)
+        ax.colorbar(ticks=range(5), label='Cell types')
+        plt.draw()
+        plt.pause(0.1)  # Add a small pause to visualize the initial state
+
         for cell in route:
             robot.move(cell)
-            if previous_cell:
-                print(f"The state of the previous cell {previous_cell.get_position()} is now: {previous_cell.get_status()}\n")
-            else:
-                print() 
-            previous_cell = cell
-    
+            ax.imshow(numerical_grid, cmap='tab10')
+            plt.draw()
+            plt.pause(0.1)  # Add a small pause to visualize each step of the movement
+
+            # You can add additional visualization updates here if needed
+
+        # Add a final pause to keep the animation visible after completion
+        plt.pause(2)
+
+    def convert_grid_to_numerical(self):
+        # Define a dictionary to map cell types to numbers
+        cell_type_to_num = {
+            Empty_Cell: 0,
+            Loading_Cell: 1,
+            Unloading_Cell: 2,
+            Storage_Cell: 3,
+            Route_Cell: 4
+        }
+
+        # Convert the grid to a numerical grid
+        numerical_grid = [[cell_type_to_num[type(cell)] for cell in row] for row in self.grid]
+
+        return numerical_grid
 
     def fetch_product(self, robot:Robot, cell:Cell, quantity:int):
         route_to_cell, route_back = self.generate_objective(robot, cell)
@@ -351,5 +418,55 @@ class Warehouse:
         robot.load_product(quantity)
         self.move_robot(robot, route_back)
         robot.unload_product()
+        completed_time = robot.get_objective_time()
         print(f"Robot number {robot.get_robot_id()} used {robot.get_objective_time()} seconds to complete the task\n")
         robot.reset_objective_time()
+        return completed_time
+
+    def handle_truck_load(self, truck_load: Truck_Load):
+        completed_time = 0
+        products = truck_load.get_products().copy()  # Create a copy of the dictionary
+        for product, quantity in products.items():
+            while quantity > 0:
+                print(f"Product: {product.get_code()}, Quantity: {quantity}\n")
+                storage_cell = self.find_storage_cell(product)
+                robot = self.get_available_robot()
+                while robot is None:
+                    robot = self.get_available_robot()
+                route_to_cell, route_back = self.generate_objective(robot, storage_cell)
+                quantity_able_to_carry = min(quantity, robot.get_available_capacity() // product.get_weight())
+                robot.set_on_hand(product, quantity_able_to_carry)
+                truck_load.decrease_quantity(product, quantity_able_to_carry)
+                quantity -= quantity_able_to_carry
+                self.move_robot(robot, route_to_cell)
+                robot.restock_product()
+                self.move_robot(robot, route_back)
+        completed_time = robot.get_objective_time()
+        print(f"Robot number {robot.get_robot_id()} used {robot.get_objective_time()} seconds to complete the task\n")
+        robot.reset_objective_time()
+        return completed_time
+
+    def handle_order(self, order:Order) -> None:
+        product = order.get_product()
+        quantity = order.get_quantity()
+        storage_cell = self.find_storage_cell(product)
+        robot = self.get_available_robot()
+        while self.get_available_robot() == None:
+            robot = self.get_available_robot()
+        completed_time = self.fetch_product(robot, storage_cell, quantity)
+        self.completed_orders[order] = completed_time
+        self.remaining_orders.remove(order)
+
+    # def handle_truck_load(self, truck_loads: list):
+    #     for truck_load in truck_loads:
+    #         products = truck_load.get_products()
+    #         for product, quantity in products:
+    #             storage_cell = self.find_storage_cell(product)
+    #             robot = self.get_available_robot()
+    #             while self.get_available_robot() == None:
+    #                 robot = self.get_available_robot()
+    #             completed_time = self.restock_product(robot, storage_cell, quantity)
+    #             truck_load[product] -= quantity
+    #             if truck_load[product] == 0:
+    #                 del truck_load[product]
+    #         truck_loads.remove(truck_load)
