@@ -120,7 +120,7 @@ class Robot:
 
     def set_global_state(self) -> None:
         self.global_time +=1
-        
+
 
     def get_objective_time(self) -> int:
         return self.current_objective_time
@@ -130,6 +130,9 @@ class Robot:
     
     def get_available_capacity(self) -> int:
         return self.available_capacity
+    
+    def get_current_pos(self) -> Route_Cell:
+        return self.current_pos
     
     def reset_objective_time(self) -> None:
         self.current_objective_time = 0
