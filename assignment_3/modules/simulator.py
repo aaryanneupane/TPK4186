@@ -19,10 +19,3 @@ class simulator:
                 robot.set_global_state()
                 robot.get_current_pos()
             self.current_time+=1
-
-   
-
-  
-    
-
-    
