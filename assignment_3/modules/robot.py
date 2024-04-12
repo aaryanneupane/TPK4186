@@ -16,6 +16,7 @@ class Robot:
         self.objective = False
         Robot.Robot_ID += 1
         self.current_objective_time = 0
+        self.global_time = 0
 
     def __str__(self) -> str:
         return f"""Robot with ID: {self.robot_id}
@@ -116,6 +117,10 @@ class Robot:
 
     def set_target_cell(self, cell: Cell) -> None:
         self.target_cell = cell
+
+    def set_global_state(self) -> None:
+        self.global_time +=1
+        
 
     def get_objective_time(self) -> int:
         return self.current_objective_time
