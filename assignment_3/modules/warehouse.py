@@ -125,19 +125,25 @@ class Warehouse:
     def animate_warehouse(self):
         fig, ax = plt.subplots()
         cell_type_to_color = {Empty_Cell: 'white', Loading_Cell: 'blue', Unloading_Cell: 'green', Storage_Cell: 'gray', Route_Cell: 'black'}
+
         def update(frame):
             ax.clear()
+            numerical_grid = self.convert_grid_to_numerical()  # Convert the grid to numerical format
+
             for i in range(self.height):
                 for j in range(self.length):
                     cell = self.grid[i][j]
                     color = cell_type_to_color[type(cell)]
                     ax.add_patch(plt.Rectangle((j, i), 1, 1, color=color, edgecolor='black'))
+
             for robot in self.robots:
                 ax.add_patch(plt.Circle((robot.current_pos.position[1] + 0.5, robot.current_pos.position[0] + 0.5), 0.4, color='red'))
+
             plt.xlim(0, self.length)
             plt.ylim(0, self.height)
             plt.gca().set_aspect('equal', adjustable='box')
-        ani = FuncAnimation(fig, update, frames=range(10), repeat=True)
+
+        ani = FuncAnimation(fig, update, frames=range(10), repeat=False)  # Adjust frames according to your requirement
         plt.show()
     
     
@@ -169,8 +175,10 @@ class Warehouse:
             self.order_weight = 0
             self.count_orders_for_truckload = 0
         self.orders.append(new_order)
+        self.remaining_orders.append(new_order)
         self.order_weight += new_order.get_weight()
         self.count_orders_for_truckload +=1 
+        return new_order
         
     def add_truck_load_to_warehouse(self):
         new_truck_load = Truck_Load()
@@ -374,20 +382,24 @@ class Warehouse:
         else:
             ValueError("No available robots in the loading cell")
 
-    def move_robot(self, robot: Robot, route: list[Cell]):
-        fig, ax = plt.subplots()
+    def move_robot(self, robot: Robot, route: list[Cell], fig, ax):
         numerical_grid = self.convert_grid_to_numerical()  # Convert the grid to numerical format
         ax.imshow(numerical_grid, cmap='tab10')
         ax.set_xticks(range(self.length))
         ax.set_yticks(range(self.height))
         ax.grid(True)
-        ax.colorbar(ticks=range(5), label='Cell types')
+        fig.colorbar(ax.imshow(numerical_grid, cmap='tab10'), ax=ax, ticks=range(5), label='Cell types')
         plt.draw()
         plt.pause(0.1)  # Add a small pause to visualize the initial state
 
         for cell in route:
             robot.move(cell)
+            ax.clear()
             ax.imshow(numerical_grid, cmap='tab10')
+            for i in range(self.height):
+                for j in range(self.length):
+                    if isinstance(self.grid[i][j], Robot):
+                        ax.add_patch(plt.Circle((j + 0.5, i + 0.5), 0.4, color='red'))
             plt.draw()
             plt.pause(0.1)  # Add a small pause to visualize each step of the movement
 
@@ -453,9 +465,20 @@ class Warehouse:
         robot = self.get_available_robot()
         while self.get_available_robot() == None:
             robot = self.get_available_robot()
-        completed_time = self.fetch_product(robot, storage_cell, quantity)
+        fig, ax = plt.subplots()
+        route_to_cell, route_back = self.generate_objective(robot, storage_cell)
+        quantity_able_to_carry = min(quantity, robot.get_available_capacity() // product.get_weight())
+        robot.set_on_hand(product, quantity_able_to_carry)
+        self.move_robot(robot, route_to_cell, fig, ax)
+        robot.restock_product()
+        self.move_robot(robot, route_back, fig, ax)
+        completed_time = robot.get_objective_time()
+        print(f"Robot number {robot.get_robot_id()} used {robot.get_objective_time()} seconds to complete the task\n")
+        robot.reset_objective_time()
+        plt.close(fig)  # Close the figure after the animation is completed
         self.completed_orders[order] = completed_time
         self.remaining_orders.remove(order)
+        self.animate_warehouse()
 
     # def handle_truck_load(self, truck_loads: list):
     #     for truck_load in truck_loads:
