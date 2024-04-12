@@ -387,9 +387,8 @@ class Warehouse:
             robot.move(cell)
             sleep(0.5)
             if previous_cell:
-                print(
-                    f"The state of the previous cell {previous_cell.get_position()} is now: {previous_cell.get_status()}\n"
-                )
+                pass
+                #print(f"The state of the previous cell {previous_cell.get_position()} is now: {previous_cell.get_status()}\n")
             else:
                 print()
             previous_cell = cell
@@ -443,12 +442,8 @@ class Warehouse:
         while self.get_available_robot() == None:
             robot = self.get_available_robot()
         route_to_cell, route_back = self.generate_objective(robot, storage_cell)
-        quantity_able_to_carry = min(
-            quantity, robot.get_available_capacity() // product.get_weight()
-        )
-        robot.set_on_hand(product, quantity_able_to_carry)
         self.move_robot(robot, route_to_cell)
-        robot.restock_product()
+        robot.load_product(quantity)
         self.move_robot(robot, route_back)
         completed_time = robot.get_objective_time()
         print(
