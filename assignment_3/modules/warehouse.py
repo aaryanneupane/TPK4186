@@ -391,9 +391,8 @@ class Warehouse:
             robot.move(cell)
             sleep(0.5)
             if previous_cell:
-                print(
-                    f"The state of the previous cell {previous_cell.get_position()} is now: {previous_cell.get_status()}\n"
-                )
+                pass
+                #print(f"The state of the previous cell {previous_cell.get_position()} is now: {previous_cell.get_status()}\n")
             else:
                 print()
             previous_cell = cell
