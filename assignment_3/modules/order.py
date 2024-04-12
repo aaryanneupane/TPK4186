@@ -5,7 +5,6 @@ from .product import Product
 class Order:
     last_order_number = 0
     
-    
     def __init__(self, name:str, catalog:Catalog) -> None:
         self.customer = name
         Order.last_order_number += 1

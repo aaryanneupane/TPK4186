@@ -15,3 +15,5 @@ print(f"Wanted {wanted_product} and it is stored at {product_stored_at}\n")
 available_robot = new_warehouse.get_available_robot()
 
 new_warehouse.fetch_product(available_robot, product_stored_at, quantity=4)
+
+new_warehouse.animate_warehouse()

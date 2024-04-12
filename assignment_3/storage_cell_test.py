@@ -1,7 +1,7 @@
 from modules.warehouse import Warehouse
 from modules.printer import Printer
 
-new_warehouse = Warehouse(1, 3, 10, 1)
+new_warehouse = Warehouse(4, 6, 120, 1)
 
 new_printer = Printer(new_warehouse)
 

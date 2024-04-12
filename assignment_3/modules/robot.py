@@ -1,4 +1,5 @@
 from modules.cell import *
+from modules.product import Product
 
 class Robot:
     Robot_ID = 1
@@ -79,8 +80,22 @@ class Robot:
         print(f"Robot {self.robot_id} unloaded {quantity} of {product} to the unloading cell\n")
         self.current_objective_time += 120
         self.objective = False
-            
     
+    def restock_product(self):
+        # Restock the product to the shelf
+        product = self.on_hand[0]
+        quantity = self.on_hand[1]
+        for shelf in self.target_cell.get_shelves():
+            if shelf.get_product() is None or shelf.get_product() == product:
+                for _ in range(quantity):
+                    shelf.add_product(product)
+                print(f"Robot {self.robot_id} restocked {quantity} of {product} to {self.target_cell}\n")
+                break
+        self.current_objective_time += 120
+        self.objective = False
+    
+    
+            
     def set_current_pos(self, cell: Cell) -> None:
         self.current_pos = cell
 
@@ -95,6 +110,9 @@ class Robot:
     
     def set_route_back(self, route: list[Cell]) -> None:
         self.route_back = route
+    
+    def set_on_hand(self, product: Product, quantity: int) -> None:
+        self.on_hand = (product, quantity)
 
     def set_target_cell(self, cell: Cell) -> None:
         self.target_cell = cell
@@ -105,6 +123,8 @@ class Robot:
     def get_robot_id(self) -> int:
         return self.robot_id
     
+    def get_available_capacity(self) -> int:
+        return self.available_capacity
+    
     def reset_objective_time(self) -> None:
         self.current_objective_time = 0
-    

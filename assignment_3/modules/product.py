@@ -7,6 +7,9 @@ class Product:
     
     def __str__(self) -> str:
         return f"product name {self.code} with weight {self.weight}"
+    
+    def __repr__(self) -> str:
+        return str(self)
 
     def get_code(self) -> str:
         return self.code
