@@ -134,8 +134,8 @@ class Warehouse:
             for j in range(self.length):
                 cell = self.grid[i][j]
                 if isinstance(cell, Storage_Cell):
-                    for shelf in cell.shelves:
-                        if shelf.get_product().get_code() == product.get_code():
+                    for shelf in cell.get_shelves():
+                        if shelf.get_product() == product:
                             return cell
         raise ValueError("No storage cell contains this product")
 
@@ -378,7 +378,7 @@ class Warehouse:
         available_robots = self.get_loading_cell().get_available_robots()
         if len(available_robots) > 0:
             return available_robots[0]
-    
+
     def remove_robot_from_loading_cell(self, robot: Robot):
         self.get_loading_cell().remove_robot(robot)
 
@@ -392,7 +392,7 @@ class Warehouse:
             sleep(0.5)
             if previous_cell:
                 pass
-                #print(f"The state of the previous cell {previous_cell.get_position()} is now: {previous_cell.get_status()}\n")
+                # print(f"The state of the previous cell {previous_cell.get_position()} is now: {previous_cell.get_status()}\n")
             else:
                 print()
             previous_cell = cell
@@ -438,8 +438,10 @@ class Warehouse:
         robot.reset_objective_time()
         return completed_time
 
-    def handle_order(self, robot:Robot, order: Order) -> None:
-        print(f"Robot {robot.get_robot_id()} is handling order {order.get_order_number()}\n")
+    def handle_order(self, robot: Robot, order: Order) -> None:
+        print(
+            f"Robot {robot.get_robot_id()} is handling order {order.get_order_number()}\n"
+        )
         self.remove_robot_from_loading_cell(robot)
         product = order.get_product()
         quantity = order.get_quantity()
@@ -473,7 +475,7 @@ class Warehouse:
             if time:
                 self.add_available_robot(robot)
                 current_order = robot.get_order()
-                self.completed_orders[current_order] = time
+                self.completed_orders[current_order] = time[0]
                 robot.set_order(None)
                 robot.set_objective_time(0)
 
@@ -481,6 +483,6 @@ class Warehouse:
             robot = self.get_available_robot()
 
             if robot is None:
-                return   
-            self.handle_order(robot, self.remaining_orders[-1])
+                return
+            self.handle_order(robot, self.remaining_orders[0])
             self.remaining_orders.pop()

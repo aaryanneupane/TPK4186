@@ -54,9 +54,6 @@ class Robot:
             self.state_time += 10
             return
 
-       # Check if the robot has reached the target cell
-        print(f"This is the next cell {next_cell}")
-
         if next_cell == self.second_last_cell:
             self.current_state = "Loading"
         elif isinstance(next_cell, Unloading_Cell):
