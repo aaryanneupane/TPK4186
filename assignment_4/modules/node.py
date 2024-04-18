@@ -1,8 +1,7 @@
 
 class Node:
-    def __init__(self, id, name):
+    def __init__(self, id):
         self.id = id
-        self.name = name
         self.predecessors = []
         self.successors = []
         self.start_date = None
@@ -14,13 +13,13 @@ class Node:
     def setId(self, id):
         self.id = id
     
-    def getPredeceddor(self):
+    def getPredecessor(self):
         return self.predecessors
     
     def addPredecessor(self, constraint):
         self.predecessors.append(constraint)
 
-    def getSucessor(self):
+    def getSuccessor(self):
         return self.successors
     
     def addSuccessor(self, constraint):

@@ -1,13 +1,15 @@
 from modules.container import Container
 
-class Lane(Container):
+class Lane:
     
 #lanes are managing sets of tasks
 
-    def _init_(self):
-        Container.__init__(self,id)
+    def __init__(self, id, name):
+        #Container.__init__(self,id)
         #self.id = id
         #self.name = name
+        self.id = id
+        self.name = name
         self.tasks = []
         
     def getId(self):
@@ -18,6 +20,9 @@ class Lane(Container):
         
     def getTasks(self):
         return self.tasks
+    
+    def getName(self):
+        return self.name
     
     def appendTasks(self, task):
         self.tasks.append(task)

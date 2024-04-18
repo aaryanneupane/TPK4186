@@ -62,4 +62,4 @@ root = ET.fromstring(xml_file)
 for child in root:
     print(child.tag, child.attrib)
     
-print(new_parser.parse_xml(xml_file))
+print(new_parser.parse_xml('controlSystemProject.xml'))

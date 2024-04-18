@@ -7,7 +7,7 @@ class Printer:
 
 # Test the parser and printer
 parser = ProjectParser()
-document = parser.parseProject("assignment_4/controlSystemProject.xml")
+document = parser.parse_xml('controlSystemProject.xml')
 
 printer = Printer()
 printer.print_document(document)

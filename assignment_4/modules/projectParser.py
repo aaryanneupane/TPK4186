@@ -29,8 +29,10 @@ class ProjectParser:
         pass
 
     def parse_xml(self, xml_file):
+        with open(xml_file, 'r') as file:
+            text = file.read()
         id = 0
-        root = ET.fromstring(xml_file)
+        root = ET.fromstring(text)
         if root.tag == "project":
             print(root.tag)
             print(root.attrib['name'])
@@ -40,24 +42,36 @@ class ProjectParser:
             id +=1
             if child.tag == 'gate':
                 gate_name = child.attrib['name']
-                gate = Gate(id, gate_name)
+                project.newGate(id, gate_name)
             if child.tag == 'lane':
                 lane_name = child.attrib['name']
-                lane = Lane(id, lane_name)
-            if child.tag == 'precendence-contstraint':
-                source = child.attrib['source']
-                target = child.attrib['target']
+                lane = project.newLane(id, lane_name)
+                for grandchild in child:
+                    id +=1
+                    if grandchild.tag == 'precedence-constraint':
+                        source = grandchild.attrib['source']
+                        target = grandchild.attrib['target']
+                        source_node = project.lookForNode(source)
+                        target_node = project.lookForNode(target)
+                        project.newConstraint(source_node, target_node)
+                        
+                    if  grandchild.tag == 'task':
+                        task_name = grandchild.attrib['name']
+                        min_duration = float(grandchild.attrib['minimum-duration'])
+                        max_duration = float(grandchild.attrib['maximum-duration'])
+                        task =project.newTask(id, task_name)
+                        lane.appendTasks(task)
+                        task.setMinimumDuration(min_duration)
+                        task.setMaximumDuration(max_duration)
+            if child.tag == 'precedence-constraint':
+                source = grandchild.attrib['source']
+                target = grandchild.attrib['target']
                 source_node = project.lookForNode(source)
                 target_node = project.lookForNode(target)
-                constraint = Constraint(id, source_node, target_node)
-                project.constraints.append(constraint)
-            if  child.tag == 'task':
-                task_name = child.attrib['name']
-                min_duration = float(child.attrib['minimum-duration'])
-                max_duration = float(child.attrib['maximum-duration'])
-                task = Task(id, task_name)
-                task.setMinimumDuration(min_duration)
-                task.setMaximumDuration(max_duration)
-                lane.tasks.append(task)
+                project.newConstraint(source_node, target_node)
+        
+
+
+
                         
         return project
