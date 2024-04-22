@@ -33,7 +33,7 @@ class Project:
         
     def newGate(self, id):
         gate = Gate(id)
-        self.nodes[id] = gate
+        self.gates[id] = gate
         return gate
     
     def newTask(self,id, name):

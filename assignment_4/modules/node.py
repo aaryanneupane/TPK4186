@@ -1,14 +1,22 @@
 
 class Node:
-    def __init__(self, id):
+    def __init__(self, id, name):
         self.id = id
+        self.name = name
         self.predecessors = []
         self.successors = []
         self.start_date = None
         self.end_date = None
         
+    def __repr__(self) -> str:
+        return self.name
+        
+        
     def getId(self):
         return self.id
+    
+    def getName(self):
+        return self.name
     
     def setId(self, id):
         self.id = id

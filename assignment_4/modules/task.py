@@ -2,11 +2,12 @@ from modules.node import Node
 
 class Task(Node):
     def __init__(self, id, name):
-        Node.__init__(self,id)
-        self.name = name
+        Node.__init__(self,id, name)
         self.minimumDuration = 0
         self.maximumDuration = 0
         self.expectedDuration = 0
+        
+    
         
     def getMinimumDuration(self):
         return self.minimumDuration
@@ -26,5 +27,4 @@ class Task(Node):
     def setExpectedDuration(self, duration):
         self.expectedDuration = duration
 
-    def getName(self):
-        return self.name
+   
