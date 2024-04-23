@@ -5,8 +5,8 @@ class Node:
         self.name = name
         self.predecessors = []
         self.successors = []
-        self.start_date = None
-        self.end_date = None
+        self.startDate = 0
+        self.endDate = 0
         
     def __repr__(self) -> str:
         return self.name
@@ -21,16 +21,28 @@ class Node:
     def setId(self, id):
         self.id = id
     
-    def getPredecessor(self):
+    def getPredecessors(self):
         return self.predecessors
     
     def addPredecessor(self, constraint):
         self.predecessors.append(constraint)
 
-    def getSuccessor(self):
+    def getSuccessors(self):
         return self.successors
     
     def addSuccessor(self, constraint):
         self.successors.append(constraint)
+
+    def setStartDate(self, startDate):
+        self.startDate = startDate
+
+    def setEndDate(self, EndDate):
+        self.endDate = EndDate
+
+    def getStartDate(self) -> int:
+        return self.startDate
+
+    def getEndDate(self) -> int:
+        return self.endDate 
   
 

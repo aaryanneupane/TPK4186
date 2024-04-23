@@ -19,5 +19,10 @@ class Printer:
 
         for constraint in project.getConstraints():
             print(constraint)
+            
+        for task in project.getTasks():
+            if task.getName() == "DesignDocumentation":
+                print(task.getPredecessors())
+                print(task.getSuccessors())
         
             

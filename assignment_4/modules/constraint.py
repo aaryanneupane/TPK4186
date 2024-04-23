@@ -4,6 +4,9 @@ class Constraint:
     def __init__(self, sourceNode: Node, targetNode: Node):
         self.sourceNode = sourceNode
         self.targetNode = targetNode
+        
+    def __repr__(self) -> str:
+        return f"{self.sourceNode} -> {self.targetNode}"
     
     def addSuccessor(self):
         self.sourceNode.addSuccessor(self)

@@ -64,16 +64,13 @@ class ProjectParser:
                             task.setMinimumDuration(min_duration)
                             task.setMaximumDuration(max_duration)
 
-        
-                           
-                        
-                        
 
                     if grandchild.tag == 'precedence-constraint':
                         source_name = grandchild.attrib['source']
                         target_name = grandchild.attrib['target']
                         source_node = None
                         target_node = None
+                        notExist = True
                         for task in project.getTasks():
                             if task.getName() == source_name:
                                 source_node = task
@@ -87,18 +84,26 @@ class ProjectParser:
                             if gate.getName() == target_name:
                                 gate.getId()
                                 target_node = gate
+                        for constraint in project.getConstraints():
+                            if constraint.getSourceNode() == source_node and constraint.getTargetNode() == target_node:
+                                notExist = False
+                        if notExist:       
+                            project.newConstraint(source_node, target_node)
+                            source_node.addSuccessor(target_node)
+                            target_node.addPredecessor(source_node)
+
                         
-                        
-                        project.newConstraint(source_node, target_node)
+                       
                 
                         
                         
                  
             if child.tag == 'precedence-constraint':
-                source_name = grandchild.attrib['source']
-                target_name = grandchild.attrib['target']
+                source_name = child.attrib['source']
+                target_name = child.attrib['target']
                 source_node = None
                 target_node = None
+                notExist = True
                 for task in project.getTasks():
                     if task.getName() == source_name:
                         source_node = task
@@ -112,11 +117,14 @@ class ProjectParser:
                     if gate.getName() == target_name:
                         gate.getId()
                         target_node = gate
+                for constraint in project.getConstraints():
+                    if constraint.getSourceNode() == source_node and constraint.getTargetNode() == target_node:
+                        notExist = False
+                if notExist:       
+                    project.newConstraint(source_node, target_node)
+                    source_node.addSuccessor(target_node)
+                    target_node.addPredecessor(source_node)
 
-                project.newConstraint(source_node, target_node)
-    
 
-
-
-                        
+            
         return project

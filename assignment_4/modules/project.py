@@ -46,7 +46,7 @@ class Project:
     
     def newConstraint(self, sourceNode, targetNode):
         constraint = Constraint(sourceNode, targetNode)
-        self.constraints.append((sourceNode,targetNode))
+        self.constraints.append(constraint)
         return constraint
     
     def getLanes(self):
