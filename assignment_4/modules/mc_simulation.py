@@ -4,6 +4,7 @@ import random
 from modules.project import Project
 from modules.task import Task
 from modules.gate import Gate
+import csv
 
 
 
@@ -61,37 +62,60 @@ class MonteCarloSimulation:
                         remaining_tasks_and_gates.remove(node)
     
     
-    def execute_simulation(self):
-        project_durations = []
-        for _ in range (self.samples):
-            self.setDurations()
-            self.calculateStartAndEndTimes()
-            for gate in self.project.getGates():
-                if gate.getName() == "end":
-                    project_duration = gate.getEndDate()
-                    project_durations.append(project_duration)
+    def execute_simulation(self, csv_filename="simulation_results.csv"):
+         
+        with open(csv_filename, 'w', newline='') as csvfile:
+            fieldnames = ['Sample', 'Total_Duration'] + [task.getName() for task in self.project.getTasks()]
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+            writer.writeheader()
+
+            for sample in range(self.samples):
+                self.setDurations()
+                self.calculateStartAndEndTimes()
+                
+                task_durations = {task.getName(): task.getExpectedDuration() for task in self.project.getTasks()}
+                
+                total_duration = None
+                for gate in self.project.getGates():
+                    if gate.getName() == "end":
+                        total_duration = gate.getEndDate()
+                        break
+                
+                writer.writerow({
+                    'Sample': sample + 1,
+                    'Total_Duration': total_duration,
+                    **task_durations
+                })
+                
+                if sample + 1 >= self.samples:
+                    break
+
+        # After saving data to CSV, calculate and display statistics and histogram
+        project_durations = list(task_durations.values())
+        
         durations_array = np.array(project_durations)
         mean = np.mean(durations_array)
-        standard_deviation = np.std(durations_array)     
+        standard_deviation = np.std(durations_array)
         min_value = np.min(durations_array)
         max_value = np.max(durations_array)
         median = np.percentile(durations_array, 50)
         quantile_90 = np.percentile(durations_array, 90)
-        print("Mean:" + str(mean))
-        print("Standard_deviation:" + str(standard_deviation))
-        print("Minimum value:" + str(min_value))
-        print("Maximum value:" + str(max_value))
-        print("Median:" + str(median))
-        print("Quantile 90:" + str(quantile_90))
 
-        
-        
+        print("Mean:", mean)
+        print("Standard_deviation:", standard_deviation)
+        print("Minimum value:", min_value)
+        print("Maximum value:", max_value)
+        print("Median:", median)
+        print("Quantile 90:", quantile_90)
+
         plt.hist(durations_array, bins=30, edgecolor='black')
         plt.title('Histogram of Project Durations')
         plt.xlabel('Duration')
         plt.ylabel('Frequency')
         plt.grid(True)
         plt.show()
+
                             
 
         
