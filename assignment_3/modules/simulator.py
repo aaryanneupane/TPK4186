@@ -25,9 +25,13 @@ class Simulator:
         "Erik",
     ]
 
-    def __init__(self, end_time: int) -> None:
+    def __init__(self, end_time: int, ally_size:int, storage_size:int, product_size:int, robot_size:int) -> None:
         self.time = end_time
         self.current_time = 0
+        self.ally_size = ally_size
+        self.storage_size = storage_size
+        self.product_size = product_size
+        self.robot_size = robot_size
         self.robot_markers = {}
         self.colors = dict(mcolors.BASE_COLORS, **mcolors.CSS4_COLORS)  # Dictionary of available colors
 
@@ -41,7 +45,7 @@ class Simulator:
         # Initialize a plot of the warehouse grid
         self.fig, self.ax = plt.subplots()
         self.grid = numerical_grid
-        self.im = self.ax.imshow(self.grid, cmap='tab10', interpolation='none')
+        self.im = self.ax.imshow(self.grid, cmap='gray', interpolation='none')
 
         # Display the grid as an image
         self.ax.set_xticks(range(warehouse.length))
@@ -60,10 +64,30 @@ class Simulator:
     def update_warehouse(self, frame, warehouse:Warehouse):
 
         if self.current_time >= self.time:
-            return self.im,
+            print(f"------------------------------------------------------------------------------------------------")
+            print("\nSimulation has ended\n")
+            print(f"------------------------------------------------------------------------------------------------\n")
+            total_time = 0
+            number_of_completed_orders = len(warehouse.completed_orders)
+            number_of_cancelled_orders = len(warehouse.canceled_orders)
+            remaining_orders = len(warehouse.remaining_orders)
+            for order, time in warehouse.completed_orders.items():
+                total_time += time
+
+            average_pick_up_time = total_time / number_of_completed_orders
+
+            print(f"At the end of the simulation of {self.time} seconds, with {len(warehouse.get_robots())} robots, in a {warehouse.get_warehouse_height()} X {warehouse.get_warehouse_length()} Warehouse, these are our results:\n")
+            print(f"The total amount of orders delivered were: {number_of_completed_orders}\n")
+            print(f"The total amount of cancelled orders were: {number_of_cancelled_orders}\n")
+            print(f"The amount of remaining orders we could not deliver: {remaining_orders}\n")
+            print(f"The average amount of time it took to pick up the order was {average_pick_up_time}\n")
+            print(f"The amount of truck loads that were handled are: {len(warehouse.completed_truck_loads.keys())}\n")
+            if sum(warehouse.completed_truck_loads.values()):
+                print(f"The average amount of time it took to handle a truck load was: {sum(warehouse.completed_truck_loads.values()) / len(warehouse.completed_truck_loads)}\n")
+            return
         
         warehouse.handle_next_time_step()
-        if self.current_time % 200 == 0:
+        if self.current_time % 140 == 0:
                 order_name = random.choice(Simulator.client_list)
                 warehouse.add_order_to_warehouse(order_name)
         self.current_time += 10
@@ -91,7 +115,7 @@ class Simulator:
         plt.show()
 
     def execute_simulation_loop(self):
-        warehouse = Warehouse(4, 6, 10, 4)
+        warehouse = Warehouse(self.ally_size, self.storage_size, self.product_size, self.robot_size)
         self.plot_warehouse(warehouse)
         self.animate_warehouse(warehouse)
         plt.pause(0.1)  # Add a pause to display each frame

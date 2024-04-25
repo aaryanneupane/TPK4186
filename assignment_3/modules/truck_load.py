@@ -37,10 +37,16 @@ class Truck_Load:
         
     def generate_random_truck_load(self,  catalog:Catalog):
         for product in catalog.get_products():
-            self.add_product(product, 2)
+            self.add_product(product, 2) # 2 is a random number, it can be changed to any number
 
     def get_products(self) -> dict:
         return self.products
+    
+    def get_first_item(self) -> tuple[Product, int]:
+        if len(self.products) == 0:
+            return None
+        return next(iter(self.products.items()))
+
     
     def decrease_quantity(self, product:Product, quantity:int) -> None:
         print(self.products)

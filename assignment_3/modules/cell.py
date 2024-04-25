@@ -36,16 +36,6 @@ class Storage_Cell(Cell):
         # return super().__str__()
         return f"({self.position[0]}, {self.position[1]}) with {len(self.shelves)} shelves"  # For robot movement testing
 
-    # def populate_shelves(self, catalog: Catalog):
-    #     for shelf in self.shelves:
-    #         product = catalog.get_products()[Storage_Cell.catalog_count]
-    #         if product is not None:
-    #             while shelf.remaining_capacity() >= product.weight:
-    #                 shelf.add_product(product)
-    #     if Storage_Cell.catalog_count == len(catalog.get_products()) - 1:
-    #         Storage_Cell.catalog_count = 0
-    #     Storage_Cell.catalog_count += 1
-
     def populate_shelves(self, catalog: Catalog):
         for shelf in self.shelves:
             product = catalog.get_products()[Storage_Cell.catalog_count]

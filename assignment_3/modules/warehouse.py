@@ -7,19 +7,6 @@ from .order import Order
 from .truck_load import Truck_Load
 from time import sleep
 
-hardcoded_catalog = Catalog()
-hardcoded_catalog.add_product(Product("Nail", 2))
-hardcoded_catalog.add_product(Product("Wooden Plank", 9))
-hardcoded_catalog.add_product(Product("Screwdriver", 4))
-hardcoded_catalog.add_product(Product("White Paint", 3))
-hardcoded_catalog.add_product(Product("Black Paint", 2))
-hardcoded_catalog.add_product(Product("Paper Sheet", 7))
-hardcoded_catalog.add_product(Product("Fish Hooks", 5))
-hardcoded_catalog.add_product(Product("Ducktape", 6))
-hardcoded_catalog.add_product(Product("Rope", 7))
-hardcoded_catalog.add_product(Product("Pocket Knife", 8))
-
-
 class Warehouse:
     def __init__(
         self, ally_number: int, ally_size: int, num_products: int, num_robots: Robot
@@ -38,9 +25,8 @@ class Warehouse:
             raise ValueError(
                 "There cannot be more different products than available shelves"
             )
-        # self.catalog = Catalog()
-        self.catalog = hardcoded_catalog
-        # self.catalog.generate_random_catalog(num_products)
+        self.catalog = Catalog()
+        self.catalog.generate_random_catalog(num_products)
         self.generate_warehouse()
         self.orders = []
         self.remaining_orders = []
@@ -49,6 +35,7 @@ class Warehouse:
         self.order_weight = 0
         self.count_orders_for_truckload = 0
         self.truck_loads = []
+        self.completed_truck_loads = {}
 
     def add_cell(self, cell_type: str, position: tuple):
         if not self.is_valid_position(position):
@@ -131,7 +118,6 @@ class Warehouse:
                         if shelf.get_product() == product:
                             return cell
         return None
-        raise ValueError("No storage cell contains this product")
 
     def add_order_to_warehouse(self, name: str):
         new_order = Order(
@@ -143,6 +129,8 @@ class Warehouse:
             truck_load = Truck_Load(400)
             truck_order_list = self.orders[-(self.count_orders_for_truckload) :]
             truck_load.generate_truck_load(truck_order_list)
+            self.truck_loads.append(truck_load)
+            print(f"Truck load {truck_load} added to warehouse\n")
             self.order_weight = 0
             self.count_orders_for_truckload = 0
         self.orders.append(new_order)
@@ -217,13 +205,6 @@ class Warehouse:
         return self.truck_loads
 
     def calculate_route_to_storage_cell(self, cell: Cell) -> list[Cell]:
-        """
-        Calculate the shortest route from the loading cell to the given cell using grid logic.
-        Args:
-            cell (Cell): The destination cell.
-        Returns:
-            list[Cell]: The shortest route from the loading cell to the given cell.
-        """
         # Get the position of the loading cell
         loading_cell = self.get_loading_cell().get_position()
 
@@ -379,58 +360,45 @@ class Warehouse:
     def add_available_robot(self, robot: Robot):
         self.get_loading_cell().add_robot(robot)
 
-    def move_robot(self, robot: Robot, route: list[Cell]):
-        previous_cell: Route_Cell = None
-        for cell in route:
-            robot.move(cell)
-            sleep(0.5)
-            if previous_cell:
-                pass
-                # print(f"The state of the previous cell {previous_cell.get_position()} is now: {previous_cell.get_status()}\n")
-            else:
-                print()
-            previous_cell = cell
+    def handle_truck_load(self, truck_load: Truck_Load, robot: Robot):
+        print(f"Robot {robot.get_robot_id()} is handling truck load {truck_load}\n")
+        self.remove_robot_from_loading_cell(robot)
+        next_product = truck_load.get_first_item()
+        # Finish the truck load if there are no more products
+        if next_product is None: 
+            self.truck_loads.remove(truck_load)
+            self.add_available_robot(robot)
+            robot.set_order(None)
+            robot.set_objective_time(0)
+            print(f"Truck load {truck_load} is completed\n")
+            return
+        truck_load.decrease_quantity(next_product[0], next_product[1])
+        print(f"This many products left in truck load: {len(truck_load.get_products().keys())}\n")
+        storage_cell = self.find_storage_cell(next_product[0])
+        # Handle if the product is not in the warehouse
+        if storage_cell is None:
+            storage_cell = self.get_first_empty_cell()
+            if storage_cell is None:
+                raise ValueError("No empty storage cells available")
+        robot.set_on_hand(next_product[0], next_product[1])
+        route_to_cell, route_back = self.generate_objective(robot, storage_cell)
+        print(route_to_cell)
+        robot.set_route(route_to_cell)
+        robot.set_second_last_cell(route_to_cell[-1])
+        robot.set_route_back(route_back)
+        robot.set_objective(True)
+        robot.set_current_state("Moving")
+        robot.set_order(truck_load)
 
-    def fetch_product(self, robot: Robot, cell: Cell, quantity: int):
-        route_to_cell, route_back = self.generate_objective(robot, cell)
-        # print(f"Route to cell: {route_to_cell}\n")
-        self.move_robot(robot, route_to_cell)
-        robot.load_product(quantity)
-        self.move_robot(robot, route_back)
-        robot.unload_product()
-        completed_time = robot.get_objective_time()
-        print(
-            f"Robot number {robot.get_robot_id()} used {robot.get_objective_time()} seconds to complete the task\n"
-        )
-        robot.reset_objective_time()
-        return completed_time
-
-    def handle_truck_load(self, truck_load: Truck_Load):
-        completed_time = 0
-        products = truck_load.get_products().copy()  # Create a copy of the dictionary
-        for product, quantity in products.items():
-            while quantity > 0:
-                print(f"Product: {product.get_code()}, Quantity: {quantity}\n")
-                storage_cell = self.find_storage_cell(product)
-                robot = self.get_available_robot()
-                while robot is None:
-                    robot = self.get_available_robot()
-                route_to_cell, route_back = self.generate_objective(robot, storage_cell)
-                quantity_able_to_carry = min(
-                    quantity, robot.get_available_capacity() // product.get_weight()
-                )
-                robot.set_on_hand(product, quantity_able_to_carry)
-                truck_load.decrease_quantity(product, quantity_able_to_carry)
-                quantity -= quantity_able_to_carry
-                self.move_robot(robot, route_to_cell)
-                robot.restock_product()
-                self.move_robot(robot, route_back)
-        completed_time = robot.get_objective_time()
-        print(
-            f"Robot number {robot.get_robot_id()} used {robot.get_objective_time()} seconds to complete the task\n"
-        )
-        robot.reset_objective_time()
-        return completed_time
+    def get_first_empty_cell(self):
+        for i in range(self.height):
+            for j in range(self.length):
+                cell = self.grid[i][j]
+                if isinstance(cell, Storage_Cell):
+                    for shelf in cell.get_shelves():
+                        if shelf.get_product() is None:
+                            return cell
+        return None
 
     def handle_order(self, robot: Robot, order: Order) -> None:
         print(f"Robot {robot.get_robot_id()} is handling order {order.get_order_number()}\n")
@@ -448,47 +416,41 @@ class Warehouse:
         robot.set_objective(True)
         robot.set_order(order)
         robot.set_current_state("Moving")
-
-    # def handle_truck_load(self, truck_loads: list):
-    #     for truck_load in truck_loads:
-    #         products = truck_load.get_products()
-    #         for product, quantity in products:
-    #             storage_cell = self.find_storage_cell(product)
-    #             robot = self.get_available_robot()
-    #             while self.get_available_robot() == None:
-    #                 robot = self.get_available_robot()
-    #             completed_time = self.restock_product(robot, storage_cell, quantity)
-    #             truck_load[product] -= quantity
-    #             if truck_load[product] == 0:
-    #                 del truck_load[product]
-    #         truck_loads.remove(truck_load)
+        return True
 
     def handle_next_time_step(self):
+        # Handle actions for each robot
         for robot in self.robots:
             time = robot.do_next_action()
             if time:
-                self.add_available_robot(robot)
-                current_order = robot.get_order()
-                self.completed_orders[current_order] = time[0]
-                robot.set_order(None)
-                robot.set_objective_time(0)
+                # Check if the action completed a truck load
+                if isinstance(robot.get_order(), Truck_Load):
+                    self.add_available_robot(robot)
+                    self.completed_truck_loads[robot.get_order()] = time
+                    robot.set_order(None)
+                    robot.set_objective_time(0)
+                else:
+                    # Handle completed order
+                    self.add_available_robot(robot)
+                    current_order = robot.get_order()
+                    self.completed_orders[current_order] = time[0]
+                    robot.set_order(None)
+                    robot.set_objective_time(0)
+                    robot.make_robot_available()
 
+        # If there are remaining orders, prioritize them
         if len(self.remaining_orders) > 0:
             robot = self.get_available_robot()
-            if robot is None:
-                return
-            no_stock = self.handle_order(robot, self.remaining_orders[0])
-            if no_stock:
-                self.canceled_orders.append(self.remaining_orders.pop())
-                self.add_available_robot(robot)
-            self.remaining_orders.pop()
+            if robot is not None:
+                no_stock = self.handle_order(robot, self.remaining_orders[0])
+                if no_stock is None:
+                    self.canceled_orders.append(self.remaining_orders[0])
+                    self.add_available_robot(robot)
+                    print(f"Order {self.remaining_orders[0].get_order_number()} was canceled\n")
+                self.remaining_orders.remove(self.remaining_orders[0])
 
-    def print_all_storage_cells(self):
-        for i in range(self.height):
-            for j in range(self.length):
-                cell = self.grid[i][j]
-                if isinstance(cell, Storage_Cell):
-                    print(cell)
-                    for shelf in cell.get_shelves():
-                        print(shelf)
-                    print()
+        # If there are no remaining orders but there are truck loads available, handle them
+        elif len(self.truck_loads) > 0:
+            robot = self.get_available_robot()
+            if robot is not None:
+                self.handle_truck_load(self.truck_loads[0], robot)  

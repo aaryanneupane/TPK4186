@@ -38,7 +38,7 @@ order_list = new_warehouse.get_order_list()   #Have made a string method in orde
 
 for order in order_list:
     print(order)
-    
+   
 print(new_warehouse.get_order_weight())
 
 print(new_warehouse.get_order_list())

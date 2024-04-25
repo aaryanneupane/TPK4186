@@ -1,11 +1,12 @@
 from modules.cell import *
 from modules.product import Product
 from modules.order import Order
+from modules.truck_load import Truck_Load
 
 
 class Robot:
     Robot_ID = 1
-    States = ["Moving", "Loading", "Unloading", "Restocking", "Idle"]
+    States = ["Moving", "Loading", "Unloading", "Restocking", "Idle", "Finish Restock"]
 
     def __init__(self) -> None:
         self.robot_id = Robot.Robot_ID
@@ -24,7 +25,7 @@ class Robot:
         self.state_time = 0
         self.fetch_quantity = 0
         self.current_state = "Idle"
-        self.current_order = None
+        self.current_order: Order|Truck_Load = None
         #self.wait_for_two_steps = False
 
     def __str__(self) -> str:
@@ -41,7 +42,7 @@ class Robot:
 
     def move(self, next_cell: Cell):
         # Move the robot to the next cell
-        # print(f"Robot {self.robot_id} moving to {next_cell}")
+
         self.state_time += 10
         self.objective = True
         self.current_state = "Moving"
@@ -49,33 +50,24 @@ class Robot:
         if self.current_pos:
             self.previous_pos = self.current_pos
 
-        # Check if the next cell is occupied
-        if isinstance(next_cell, Route_Cell) and next_cell.get_status():
+        # Check occupancy status of the next three cells in the route
+        next_three_cells = self.route[:3]
+        if any(isinstance(cell, Route_Cell) and cell.get_status() for cell in next_three_cells):
             print(
-                f"Robot {self.robot_id} cannot move to {next_cell}. Cell is occupied.\n"
+                f"Robot {self.robot_id} cannot move. One of the next three cells in the route is occupied.\n"
             )
             self.current_objective_time += 10
             self.state_time += 10
             return
 
-        # # Check if the robot's route has only two cells left and both are unoccupied
-        # """Her skal vi sjekke de to siste cellene i ruten, dvs. at de er rett foran storage cell"""
-        # if len(self.route) == 2 and isinstance(self.route[0], Route_Cell) and isinstance(self.route[1], Route_Cell):
-        #     if self.route[0].get_status() == False and self.route[1].get_status() == False:
-        #         print(f"Dette er før loading meldingen")
-        #         self.current_state = "Moving"
-        #     else:
-        #         print(f"Here is my current route {self.route}")
-        #         print(
-        #             "A robot is loading in front of me, cannot move two steps forward."
-        #         )
-        #         self.wait_for_two_steps = True
-        #         return
-
-        if next_cell == self.second_last_cell:
+        if next_cell == self.second_last_cell and isinstance(self.current_order, Truck_Load):
+            self.current_state = "Restocking"
+        elif next_cell == self.second_last_cell and isinstance(self.current_order, Order):    
             self.current_state = "Loading"
-        elif isinstance(next_cell, Unloading_Cell):
+        elif isinstance(next_cell, Unloading_Cell) and isinstance(self.current_order, Order):
             self.current_state = "Unloading"
+        elif isinstance(next_cell, Unloading_Cell) and isinstance(self.current_order, Truck_Load):
+            self.current_state = "Finish Restock"
 
         self.current_pos = next_cell
 
@@ -91,6 +83,7 @@ class Robot:
         self.state_time = 0
 
         print(f"Robot {self.robot_id} moved to {self.current_pos}")
+        self.route.pop(0)
 
     def load_product(self, quantity: int):
         # Load the product from the shelf
@@ -152,33 +145,69 @@ class Robot:
 
     def restock_product(self):
         # Restock the product to the shelf
+        self.state_time += 10
+        self.current_state = "Restocking"
         product = self.on_hand[0]
         quantity = self.on_hand[1]
-        for shelf in self.target_cell.get_shelves():
-            if shelf.get_product() is None or shelf.get_product() == product:
-                for _ in range(quantity):
-                    shelf.add_product(product)
-                print(
-                    f"Robot {self.robot_id} restocked {quantity} of {product} to {self.target_cell}\n"
-                )
-                break
-        self.current_objective_time += 120
+        if self.state_time < 120:
+            return
+        else:    
+            for shelf in self.target_cell.get_shelves():
+                if shelf.get_product() is None or shelf.get_product() == product:
+                    for _ in range(quantity):
+                        shelf.add_product(product)
+                    print(
+                        f"Robot {self.robot_id} restocked {quantity} of {product} to {self.target_cell}\n"
+                    )
+                    break
+            self.current_objective_time += 120
+            self.current_state = "Moving"
+            self.route = self.route_back
+
+    def finish_restock(self):
         self.objective = False
+        self.current_state = "Idle"
+        self.available_capacity = 40
+        self.on_hand = ()
+        return self.current_objective_time
+        
 
     def do_next_action(self):
-        print(f"Robot {self.robot_id} is in state {self.current_state}")
+        #print(f"Robot {self.robot_id} is in state {self.current_state}")
         if self.current_state == "Moving":
             if self.route:
-                if (isinstance(self.route[0], Route_Cell) and self.route[0].get_status() == True):
-                    self.move(self.route[0])
+                next_three_cells = self.route[:3]
+                if any(isinstance(cell, Route_Cell) and cell.get_status() for cell in next_three_cells):
+                    print(f"Robot {self.robot_id} cannot move. One of the next three cells in the route is occupied.\n")
+                    return 
                 else:
-                    self.move(self.route.pop(0))
+                    self.move(self.route[0])
             # else:
             #     raise ValueError("No route to follow")
         elif self.current_state == "Loading":
+            print(f"Robot {self.robot_id} is loading")
             self.load_product(self.fetch_quantity)
         elif self.current_state == "Unloading":
+            print(f"Robot {self.robot_id} is unloading")
             return self.unload_product()
+        elif self.current_state == "Restocking":
+            print(f"Robot {self.robot_id} is restocking")
+            return self.restock_product()
+        elif self.current_state == "Finish Restock":
+            print(f"Robot {self.robot_id} is finishing restock")
+            return self.finish_restock()
+
+
+    def make_robot_available(self):
+        self.current_order = None
+        self.route = []
+        self.route_back = []
+        self.on_hand = ()
+        self.available_capacity = 40
+        self.current_objective_time = 0
+        self.objective = False
+        self.state_time = 0
+        self.fetch_quantity = 0
 
     def set_current_pos(self, cell: Cell) -> None:
         self.current_pos = cell
@@ -207,7 +236,7 @@ class Robot:
     def set_global_state(self) -> None:
         self.global_time += 1
 
-    def set_order(self, order: Order) -> None:
+    def set_order(self, order: Order|Truck_Load) -> None:
         self.current_order = order
 
     def get_order(self) -> Order:

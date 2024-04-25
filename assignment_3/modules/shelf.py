@@ -27,7 +27,7 @@ class Shelf:
         total_weight = 0
         for item in self.product:
             total_weight += item.get_weight()
-        return 999 - total_weight
+        return 10000 - total_weight
 
     def get_product(self) -> Product:
         if len(self.product) == 0:
