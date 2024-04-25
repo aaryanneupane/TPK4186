@@ -7,8 +7,7 @@ parser = ProjectParser()
 project = parser.parse_xml("controlSystemProject.xml")
 sim = MonteCarloSimulation(project, 50)
 
-sim.setDurations()
-sim.calculateStartAndEndTimes()
+
 
 for task in project.getTasks():
             print(task.getName())

@@ -6,6 +6,7 @@ class Task(Node):
         self.minimumDuration = 0
         self.maximumDuration = 0
         self.expectedDuration = 0
+        self.actualDuration = 0
         
     
         
@@ -26,5 +27,11 @@ class Task(Node):
     
     def setExpectedDuration(self, duration):
         self.expectedDuration = duration
+
+    def getActualDuration(self):
+        return self.actualDuration
+    
+    def setActualDuration(self, duration):
+        self.actualDuration = duration
 
    

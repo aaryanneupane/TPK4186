@@ -13,6 +13,7 @@ class Classification:
         self.gate = gate
         self.maximumDuration = maximumDuration
         self.filename = filename
+        self.gate = gate
     
     def read_total_durations(self):
         total_durations = []
@@ -27,14 +28,42 @@ class Classification:
                 
         return total_durations
     
+    
+    def decideClassification(self):
+        minimumTotalDuration = 0
+        maximumTotalDuration = 0
+        totalDuration = 0
+        gate = self.gate
+        for task in self.project.getTasks():
+            if task.getEndDate() <= gate.getStartDate():
+                print(task.getActualDuration())
+                
+                minimumTotalDuration += task.getMinimumDuration()
+                maximumTotalDuration += task.getMaximumDuration()
+
+                totalDuration += task.getActualDuration()
+        print(totalDuration)
+        print(minimumTotalDuration)      
+        if totalDuration < (1.3 * minimumTotalDuration):
+            label = "on-time"
+        if totalDuration > ((1.3 * minimumTotalDuration) and (totalDuration < maximumTotalDuration)):
+            label = "delayed"
+        else: label = "failure"
+        
+        return label
+        
+
+                        
+    
     def classify(self):
         
         sim = MonteCarloSimulation(self.project, 50)
         sim.execute_simulation(self.filename)
-        sim.setDurations()
-        sim.calculateStartAndEndTimes()
+
+        for sample in sim:
+            status = self.decideClassification()
         
-        total_durations = self.read_total_durations(self.filename)
+        total_durations = self.read_total_durations()
         
         with open(self.filename, 'r') as csvfile, \
             open("classified_" + self.filename, 'w', newline='') as classified_file:
@@ -48,7 +77,7 @@ class Classification:
         # Iterate through each row (sample) in the existing file
             for row, duration in zip(reader, total_durations):
                 # Determine the status based on the duration
-                status = "On-time" if duration <= self.maximumDuration else "Failure"
+                status = self.decideClassification()
                 # Write the row along with the status to the new file
                 writer.writerow(row + [status])
             

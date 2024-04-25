@@ -1,3 +1,4 @@
+import random
 from modules.container import Container
 
 class Lane:
@@ -11,6 +12,8 @@ class Lane:
         self.id = id
         self.name = name
         self.tasks = []
+        self.workload = 0
+        
         
     def getId(self):
         return self.id
@@ -26,3 +29,10 @@ class Lane:
     
     def appendTasks(self, task):
         self.tasks.append(task)
+    
+    def setWorkload(self):
+        return random.randint(0,1)
+    
+    def getWorkload(self):
+        return self.workload
+    

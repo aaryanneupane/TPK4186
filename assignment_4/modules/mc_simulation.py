@@ -5,8 +5,7 @@ from modules.project import Project
 from modules.task import Task
 from modules.gate import Gate
 import csv
-
-
+s
 
 class MonteCarloSimulation:
     def  __init__(self, project: Project, samples: int):
@@ -16,10 +15,20 @@ class MonteCarloSimulation:
 
     
     def setDurations(self):
+        for lane in self.project.getLanes():
+            workload = random.random()
+            for task in lane.getTasks():
+                duration = task.getMinimumDuration() + (task.getMaximumDuration() - task.getMinimumDuration())*workload
+                task.setExpectedDuration(duration)
+       
         for task in self.project.getTasks():
             min = task.getMinimumDuration()
             max = task.getMaximumDuration()
-            task.setExpectedDuration(random.randint(min, max))
+            print("dette er min og max")
+            print(min)
+            print(max)
+            rand= random.randint(min, max)
+            task.setActualDuration(rand)
 
         
     
@@ -38,31 +47,37 @@ class MonteCarloSimulation:
             remaining_tasks_and_gates.append(gate)
 
         while len(remaining_tasks_and_gates) > 0:
-                for node in remaining_tasks_and_gates:
-                    has_predecessor_in_remaining = False
-                    for predecessor in node.getPredecessors():
-                        if predecessor in remaining_tasks_and_gates:
-                            has_predecessor_in_remaining = True
-                            break
-                    
-                    if has_predecessor_in_remaining:
-                        continue
+            
+        
+        
+            for node in remaining_tasks_and_gates:
+                has_predecessor_in_remaining = False
+                for predecessor in node.getPredecessors():
+                    if predecessor in remaining_tasks_and_gates:
+                        has_predecessor_in_remaining = True
+                        break
+                
+                if has_predecessor_in_remaining:
+                    continue
 
-                    else:
-                        start_time = 0
-                        for predecessor in node.getPredecessors():
-                            if predecessor.getEndDate() > start_time:
-                                start_time = predecessor.getEndDate()
-                        if isinstance(node, Task): 
-                            node.setStartDate(start_time)
-                            node.setEndDate(node.getStartDate() + node.getExpectedDuration())
-                        if isinstance(node, Gate):
-                            node.setStartDate(start_time)
-                            node.setEndDate(start_time)
-                        remaining_tasks_and_gates.remove(node)
+                else:
+                    start_time = 0
+                    for predecessor in node.getPredecessors():
+                        if predecessor.getEndDate() > start_time:
+                            start_time = predecessor.getEndDate()
+                    if isinstance(node, Task): 
+                        node.setStartDate(start_time)
+                        node.setEndDate(node.getStartDate() + node.getActualDuration())
+                    if isinstance(node, Gate):
+                        node.setStartDate(start_time)
+                        node.setEndDate(start_time)
+                    remaining_tasks_and_gates.remove(node)
     
+
+        
     
     def execute_simulation(self, csv_filename="simulation_results.csv"):
+        
          
         with open(csv_filename, 'w', newline='') as csvfile:
             fieldnames = ['Sample', 'Total_Duration'] + [task.getName() for task in self.project.getTasks()]
@@ -74,22 +89,24 @@ class MonteCarloSimulation:
                 self.setDurations()
                 self.calculateStartAndEndTimes()
                 
-                task_durations = {task.getName(): task.getExpectedDuration() for task in self.project.getTasks()}
+                task_durations = {task.getName(): task.getActualDuration() for task in self.project.getTasks()}
                 
                 total_duration = None
                 for gate in self.project.getGates():
                     if gate.getName() == "end":
                         total_duration = gate.getEndDate()
                         break
+            
                 
                 writer.writerow({
                     'Sample': sample + 1,
                     'Total_Duration': total_duration,
                     **task_durations
                 })
+        
+
                 
-                if sample + 1 >= self.samples:
-                    break
+        
 
         # After saving data to CSV, calculate and display statistics and histogram
         project_durations = list(task_durations.values())
@@ -108,13 +125,15 @@ class MonteCarloSimulation:
         print("Maximum value:", max_value)
         print("Median:", median)
         print("Quantile 90:", quantile_90)
-
-        plt.hist(durations_array, bins=30, edgecolor='black')
+        
+        '''plt.hist(durations_array, bins=30, edgecolor='black')
         plt.title('Histogram of Project Durations')
         plt.xlabel('Duration')
         plt.ylabel('Frequency')
         plt.grid(True)
-        plt.show()
+        plt.show()''' #This is commented out as the code wont stop running when we have this.
+
+      
 
                             
 
