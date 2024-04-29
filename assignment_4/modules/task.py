@@ -28,7 +28,7 @@ class Task(Node):
     def setExpectedDuration(self, duration):
         self.expectedDuration = duration
 
-    def getActualDuration(self):
+    def getActualDuration(self) ->int:
         return self.actualDuration
     
     def setActualDuration(self, duration):

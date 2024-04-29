@@ -24,12 +24,8 @@ class MonteCarloSimulation:
         for task in self.project.getTasks():
             min = task.getMinimumDuration()
             max = task.getMaximumDuration()
-            print("dette er min og max")
-            print(min)
-            print(max)
             rand= random.randint(min, max)
             task.setActualDuration(rand)
-
         
     
     def calculateStartAndEndTimes(self):
@@ -47,8 +43,6 @@ class MonteCarloSimulation:
             remaining_tasks_and_gates.append(gate)
 
         while len(remaining_tasks_and_gates) > 0:
-            
-        
         
             for node in remaining_tasks_and_gates:
                 has_predecessor_in_remaining = False
@@ -67,12 +61,13 @@ class MonteCarloSimulation:
                             start_time = predecessor.getEndDate()
                     if isinstance(node, Task): 
                         node.setStartDate(start_time)
-                        node.setEndDate(node.getStartDate() + node.getActualDuration())
+                        node.setEndDate((start_time + node.getActualDuration()))
                     if isinstance(node, Gate):
                         node.setStartDate(start_time)
                         node.setEndDate(start_time)
-                        
                     remaining_tasks_and_gates.remove(node)
+       
+           
     
 
         
@@ -81,7 +76,7 @@ class MonteCarloSimulation:
         
          
         with open(csv_filename, 'w', newline='') as csvfile:
-            fieldnames = ['Sample', 'Total_Duration'] + [task.getName() for task in self.project.getTasks()]
+            fieldnames = ['Sample', 'Total_Duration', 'Total_duration_at_mid_gate'] + [task.getName() for task in self.project.getTasks()]
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
             writer.writeheader()
@@ -91,20 +86,23 @@ class MonteCarloSimulation:
                 self.calculateStartAndEndTimes()
                 
                 task_durations = {task.getName(): task.getActualDuration() for task in self.project.getTasks()}
-                
-                total_duration = None
+                total_duration_mid_project = 0
+                total_duration = sum(task_durations.values())
+                mid_gate = None
                 for gate in self.project.getGates():
-                    print(gate.getName())
-                    print(gate.getEndDate())
-                    if gate.getName() == "end":
-                        total_duration = gate.getEndDate()
-                        break
-            
-                
+                    if gate.getName() == "MidProject":
+                        mid_gate = gate
+
+                for task in self.project.getTasks():
+                    if task.getEndDate()<= mid_gate.getEndDate():
+                        total_duration_mid_project+=task.getActualDuration()
+                        
+
                 writer.writerow({
                     'Sample': sample + 1,
                     'Total_Duration': total_duration,
-                    **task_durations
+                    **task_durations,
+                    'Total_duration_at_mid_gate': total_duration_mid_project
                 })
         
 
