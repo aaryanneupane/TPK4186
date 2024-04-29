@@ -5,7 +5,7 @@ from modules.project import Project
 from modules.task import Task
 from modules.gate import Gate
 import csv
-s
+
 
 class MonteCarloSimulation:
     def  __init__(self, project: Project, samples: int):
@@ -71,6 +71,7 @@ class MonteCarloSimulation:
                     if isinstance(node, Gate):
                         node.setStartDate(start_time)
                         node.setEndDate(start_time)
+                        
                     remaining_tasks_and_gates.remove(node)
     
 
@@ -93,6 +94,8 @@ class MonteCarloSimulation:
                 
                 total_duration = None
                 for gate in self.project.getGates():
+                    print(gate.getName())
+                    print(gate.getEndDate())
                     if gate.getName() == "end":
                         total_duration = gate.getEndDate()
                         break
