@@ -1,0 +1,9 @@
+Sample,Total_Duration,Total_duration_at_mid_gate,SpecifySystem,DeploySystem,DesignHardware,PrototypeHardware,TestHardware,ManufactureHardware,DesignSoftware,ImproveSoftware,ReleaseSoftware,DesignDocumentation,DesignTraining,PrepareCertification,TrainOperators,FinalizeCertification
+127,66,7,7,10,5,3,12,19,8,8,6,5,11,8,18,delayed
+121,69,10,6,10,5,2,9,20,10,10,6,4,12,7,10,delayed
+117,66,8,7,11,4,3,9,19,8,8,8,4,9,8,11,delayed
+123,63,8,6,8,6,3,12,15,9,8,8,6,9,7,18,delayed
+118,63,9,7,12,8,2,11,12,9,10,4,5,11,8,10,delayed
+117,61,6,4,8,4,3,8,18,8,9,7,6,9,8,19,delayed
+119,64,8,8,9,8,3,9,17,9,9,5,5,9,8,12,delayed
+121,62,6,5,12,8,2,9,17,9,10,5,5,7,8,18,delayed

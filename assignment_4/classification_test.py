@@ -17,3 +17,6 @@ classification = Classification(project, end_gate, 200, "results.csv")
 
 classification.classify()
 
+classification.training_and_testing()
+
+classification.predict_classification()
