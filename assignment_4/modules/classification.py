@@ -11,8 +11,6 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 
 class Classification:
 
-
-    
     def __init__(self, project: Project, gate: Gate, maximumDuration : int, filename: str):
         self.project = project
         self.gate = gate
@@ -31,8 +29,8 @@ class Classification:
 
 
             header = next(reader)
-            writer.writerow(header)
             header.append('Status')    
+            writer.writerow(header)
             for row in reader:
                 print(row)
                 minimumTotalDuration = 0
@@ -77,7 +75,7 @@ class Classification:
     
     def classify(self):
         
-        sim = MonteCarloSimulation(self.project, 10)
+        sim = MonteCarloSimulation(self.project, 10000)
         sim.execute_simulation(self.filename)
 
         self.addClassifications(self.gate)
@@ -111,12 +109,14 @@ class Classification:
         test_df = pd.read_csv("test_set.csv")
 
         # Extract features and labels for training set
-        trainingInstances = training_df.iloc[:, 2:-1].values
+        trainingInstances = training_df.iloc[:, :-1].values
         trainingLabels = training_df.iloc[:, -1].values
 
         # Extract features and labels for test set
-        testInstances = test_df.iloc[:, 2:-1].values
+        testInstances = test_df.iloc[:, :-1].values
         testLabels = test_df.iloc[:, -1].values
+
+        print(f"{trainingInstances}")
 
         # Train the Decision Tree Classifier
         model = DecisionTreeClassifier()
@@ -124,11 +124,8 @@ class Classification:
 
         # Predict labels for test instances
         predictedLabels = model.predict(testInstances)
-
-        
        
        # Calculate accuracy
-
         accuracy = accuracy_score(testLabels, predictedLabels)
 
         # Calculate precision
