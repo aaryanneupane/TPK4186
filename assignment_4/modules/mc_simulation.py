@@ -19,13 +19,13 @@ class MonteCarloSimulation:
             workload = random.random()
             for task in lane.getTasks():
                 duration = task.getMinimumDuration() + (task.getMaximumDuration() - task.getMinimumDuration())*workload
-                task.setExpectedDuration(duration)
+                task.setExpectedDuration(round(duration,2))
        
         for task in self.project.getTasks():
             min = task.getMinimumDuration()
             max = task.getMaximumDuration()
-            rand= random.randint(min, max)
-            task.setActualDuration(rand)
+            actual=np.random.triangular(min, task.getExpectedDuration(), max, size=None)
+            task.setActualDuration(round(actual,2))
         
     
     def calculateStartAndEndTimes(self):
@@ -102,12 +102,8 @@ class MonteCarloSimulation:
                     'Sample': sample + 1,
                     'Total_Duration': total_duration,
                     **task_durations,
-                    'Total_duration_at_mid_gate': total_duration_mid_project
+                    'Total_duration_at_mid_gate': round(total_duration_mid_project,2)
                 })
-        
-
-                
-        
 
         # After saving data to CSV, calculate and display statistics and histogram
         project_durations = list(task_durations.values())

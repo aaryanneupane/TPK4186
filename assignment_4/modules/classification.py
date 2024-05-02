@@ -6,7 +6,10 @@ import numpy
 import sys
 import pandas as pd
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from sklearn.linear_model import LogisticRegression, LinearRegression
+from sklearn.svm import SVC, SVR
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, mean_squared_error
+from sklearn.neural_network import MLPClassifier
 
 
 class Classification:
@@ -17,6 +20,17 @@ class Classification:
         self.maximumDuration = maximumDuration
         self.filename = filename
         self.gate = gate
+
+        self.X_train = None
+        self.y_train = None
+        self.X_test = None
+        self.y_test = None
+
+        self.X_train_r = None
+        self.y_train_r = None
+        self.X_test_r = None
+        self.y_test_r = None
+        
 
 
    
@@ -35,20 +49,12 @@ class Classification:
                 print(row)
                 minimumTotalDuration = 0
                 maximumTotalDuration = 0
-                #totalDuration = float(row[1])
-                if gate.getName() == "MidProject":
-                    totalDuration = float(row[2])
-                if gate.getName() == "end":
-                    totalDuration = float(row[1])
-                tasks_checked = []
-                for task in self.project.getTasks():
-                    if task.getEndDate() <= gate.getStartDate() and task not in tasks_checked:   
-                            minimumTotalDuration += task.getMinimumDuration()
-                            maximumTotalDuration += task.getMaximumDuration()
-                            tasks_checked.append(task)           
-                            #denne burde også kanskje lese fra fil? vi kunne lagt til kolonner i fila: max/min tid ved middle gate og samme for end gate
-                            #også heller fått tallene derfra
-                                           
+                totalDuration = round(float(row[1]),2)
+               # tasks_checked = []
+                for task in self.project.getTasks():  
+                    minimumTotalDuration += task.getMinimumDuration()
+                    maximumTotalDuration += task.getMaximumDuration()
+                
                                     
                 print('For rad:')
                 print(row)
@@ -62,10 +68,10 @@ class Classification:
                 print(maximumTotalDuration)
 
                 if (totalDuration < (1.3 * minimumTotalDuration)):
-                    label = "on-time"
+                    label = 1
                 elif (totalDuration > 1.3 * minimumTotalDuration) and (totalDuration < maximumTotalDuration):
-                    label = "delayed"
-                else: label = "failure"
+                    label = 0
+                else: label = 0
                 print(label)
                 row.append(label)
                 writer.writerow(row)
@@ -99,45 +105,192 @@ class Classification:
         training_set.to_csv("training_set.csv", index=False)
         test_set.to_csv("test_set.csv", index=False)
 
-
-
-
     def predict_classification(self):
 
         # Read the CSV files into pandas DataFrames
         training_df = pd.read_csv("training_set.csv")
         test_df = pd.read_csv("test_set.csv")
 
+       
+        features = ["SpecifySystem", "DesignHardware", "PrototypeHardware", "TestHardware", 
+        "DesignSoftware", "DesignDocumentation", "DesignTraining", "PrepareCertification", "Total_duration_at_mid_gate", "Status"]
+
+        training_df = training_df[features]
+        test_df = test_df[features]
+
         # Extract features and labels for training set
-        trainingInstances = training_df.iloc[:, :-1].values
-        trainingLabels = training_df.iloc[:, -1].values
+        trainingInstances = training_df.iloc[:, :-1]
+        trainingLabels = training_df.iloc[:, -1]
 
         # Extract features and labels for test set
-        testInstances = test_df.iloc[:, :-1].values
-        testLabels = test_df.iloc[:, -1].values
+        testInstances = test_df.iloc[:, :-1]
+        testLabels = test_df.iloc[:, -1]
 
-        print(f"{trainingInstances}")
+        self.X_train = trainingInstances
+        self.y_train = trainingLabels
+        self.X_test = testInstances
+        self.y_test = testLabels
 
+    def decision_tree(self):
         # Train the Decision Tree Classifier
         model = DecisionTreeClassifier()
-        model.fit(trainingInstances, trainingLabels)
-
+        model.fit(self.X_train, self.y_train)
+        
         # Predict labels for test instances
-        predictedLabels = model.predict(testInstances)
-       
-       # Calculate accuracy
-        accuracy = accuracy_score(testLabels, predictedLabels)
+        predictedLabels = model.predict(self.X_test)
+
+        # Evaluation
+        accuracy = accuracy_score(self.y_test, predictedLabels)
 
         # Calculate precision
-        precision = precision_score(testLabels, predictedLabels, average='weighted')
+        precision = precision_score(self.y_test, predictedLabels, average='weighted')
 
         # Calculate recall
-        recall = recall_score(testLabels, predictedLabels, average='weighted')
+        recall = recall_score(self.y_test, predictedLabels, average='weighted')
 
         # Calculate F1 score
-        f1 = f1_score(testLabels, predictedLabels, average='weighted')
+        f1 = f1_score(self.y_test, predictedLabels, average='weighted')
+        return accuracy, precision, recall, f1
 
-        print("Accuracy:", accuracy)
-        print("Precision:", precision)
-        print("Recall:", recall)
-        print("F1 Score:", f1)
+
+    def logistical_regression(self):
+        # Train the Decision Tree Classifier
+        model = LogisticRegression(max_iter=1000)
+        model.fit(self.X_train, self.y_train)
+        
+        # Predict labels for test instances
+        predictedLabels = model.predict(self.X_test)
+
+        # Evaluation
+        accuracy = accuracy_score(self.y_test, predictedLabels)
+
+        # Calculate precision
+        precision = precision_score(self.y_test, predictedLabels, average='weighted')
+
+        # Calculate recall
+        recall = recall_score(self.y_test, predictedLabels, average='weighted')
+
+        # Calculate F1 score
+        f1 = f1_score(self.y_test, predictedLabels, average='weighted')
+        return accuracy, precision, recall, f1
+
+    def svm(self):
+        # Train the Decision Tree Classifier
+        model = SVC()
+        model.fit(self.X_train, self.y_train)
+        
+        # Predict labels for test instances
+        predictedLabels = model.predict(self.X_test)
+
+        # Evaluation
+        accuracy = accuracy_score(self.y_test, predictedLabels)
+
+        # Calculate precision
+        precision = precision_score(self.y_test, predictedLabels, average='weighted')
+
+        # Calculate recall
+        recall = recall_score(self.y_test, predictedLabels, average='weighted')
+
+        # Calculate F1 score
+        f1 = f1_score(self.y_test, predictedLabels, average='weighted')
+
+        # print(f"\n---------------------EVALUATION-----------------------------\n")
+
+        # print("Accuracy:", accuracy)
+        # print("Precision:", precision)
+        # print("Recall:", recall)
+        # print("F1 Score:", f1)
+        return accuracy, precision, recall, f1
+
+
+    def evaluate_models(self):
+        models = [
+        ("Logistic Classification", self.logistical_regression),
+        ("Decision Tree", self.decision_tree),
+        ("Support Vector Machine", self.svm)]
+
+        print("\n---------------------EVALUATION-----------------------------\n")
+
+        for model_name, model_func in models:
+            accuracy, precision, recall, f1 = model_func()
+            print(f"{model_name}:")
+            print(f"Accuracy: {accuracy:.2f}")
+            print(f"Precision: {precision:.2f}")
+            print(f"Recall: {recall:.2f}")
+            print(f"F1 Score: {f1:.2f}\n")
+
+
+    def predict_regression(self):
+        # Read the CSV files into pandas DataFrames
+        training_df = pd.read_csv("training_set.csv")
+        test_df = pd.read_csv("test_set.csv")
+
+       
+        features = ["SpecifySystem", "DesignHardware", "PrototypeHardware", "TestHardware",
+        "DesignSoftware", "DesignDocumentation", "DesignTraining", "PrepareCertification", "Total_duration_at_mid_gate", "Total_Duration"]
+
+        training_df = training_df[features]
+        test_df = test_df[features]
+
+        # Extract features and labels for training set
+        trainingInstances = training_df.iloc[:, :-1]
+        trainingLabels = training_df.iloc[:, -1]
+
+        # Extract features and labels for test set
+        testInstances = test_df.iloc[:, :-1]
+        testLabels = test_df.iloc[:, -1]
+
+        self.X_train_r = trainingInstances
+        self.y_train_r = trainingLabels
+        self.X_test_r= testInstances
+        self.y_test_r= testLabels
+
+    def svr(self):
+        # Train the Decision Tree Classifier
+        model = SVR()
+        model.fit(self.X_train_r, self.y_train_r)
+        # Predict labels for test instances
+        predictedLabels = model.predict(self.X_test_r)
+        # Evaluation
+        accuracy = mean_squared_error(self.y_test_r, predictedLabels)
+        #print(f"MSE: {accuracy}")
+        return accuracy
+    
+    def lr(self):
+        # Train the Decision Tree Classifier
+        model = LinearRegression()
+        model.fit(self.X_train_r, self.y_train_r)
+        
+        # Predict labels for test instances
+        predictedLabels = model.predict(self.X_test_r)
+
+        # Evaluation
+        accuracy = mean_squared_error(self.y_test_r, predictedLabels)
+        #print(f"MSE: {accuracy}")
+        return accuracy
+    
+    def NN(self):
+        # Train the Decision Tree Classifier
+        model = MLPClassifier()
+        model.fit(self.X_train_r, self.y_train_r)
+        
+        # Predict labels for test instances
+        predictedLabels = model.predict(self.X_test_r)
+
+        # Evaluation
+        accuracy = mean_squared_error(self.y_test_r, predictedLabels)
+        #print(f"MSE: {accuracy}")
+        return accuracy
+    
+    def evaluate_models_regression(self):
+        models = [
+        ("Logistic Regression", self.lr),
+        ("Neural Network", self.NN),
+        ("Support Vector Machine Regression", self.svr)]
+
+        print("\n---------------------EVALUATION-----------------------------\n")
+
+        for model_name, model_func in models:
+            accuracy = model_func()
+            print(f"{model_name}:")
+            print(f"MSE: {accuracy:.2f}")

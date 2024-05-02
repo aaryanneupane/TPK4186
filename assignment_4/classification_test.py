@@ -20,3 +20,9 @@ classification.classify()
 classification.training_and_testing()
 
 classification.predict_classification()
+
+classification.evaluate_models()
+
+classification.predict_regression()
+
+classification.evaluate_models_regression()
