@@ -21,7 +21,7 @@ classification.training_and_testing()
 
 classification.predict_classification()
 
-classification.evaluate_models()
+classification.evaluate_models_classifier()
 
 classification.predict_regression()
 

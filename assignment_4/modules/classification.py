@@ -2,14 +2,15 @@ from modules.project import Project
 from modules.gate import Gate
 from modules.mc_simulation import MonteCarloSimulation
 import csv
-import numpy
+import numpy as np
+import matplotlib.pyplot as plt
 import sys
 import pandas as pd
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.linear_model import LogisticRegression, LinearRegression
 from sklearn.svm import SVC, SVR
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, mean_squared_error
-from sklearn.neural_network import MLPClassifier
+from sklearn.metrics import accuracy_score, mean_squared_error, confusion_matrix, mean_absolute_error
+from sklearn.neighbors import KNeighborsRegressor
 
 
 class Classification:
@@ -46,7 +47,7 @@ class Classification:
             header.append('Status')    
             writer.writerow(header)
             for row in reader:
-                print(row)
+                #print(row)
                 minimumTotalDuration = 0
                 maximumTotalDuration = 0
                 totalDuration = round(float(row[1]),2)
@@ -56,23 +57,23 @@ class Classification:
                     maximumTotalDuration += task.getMaximumDuration()
                 
                                     
-                print('For rad:')
-                print(row)
-                print('og gaten er:')
-                print(gate.getName())
-                print('så er actual total duration på gaten:')
-                print(totalDuration)
-                print('minimum total duration på gaten:')
-                print(minimumTotalDuration)
-                print('maximum total duration på gaten:')
-                print(maximumTotalDuration)
+                # print('For rad:')
+                # print(row)
+                # print('og gaten er:')
+                # print(gate.getName())
+                # print('så er actual total duration på gaten:')
+                # print(totalDuration)
+                # print('minimum total duration på gaten:')
+                # print(minimumTotalDuration)
+                # print('maximum total duration på gaten:')
+                # print(maximumTotalDuration)
 
                 if (totalDuration < (1.3 * minimumTotalDuration)):
                     label = 1
                 elif (totalDuration > 1.3 * minimumTotalDuration) and (totalDuration < maximumTotalDuration):
                     label = 0
                 else: label = 0
-                print(label)
+                #print(label)
                 row.append(label)
                 writer.writerow(row)
                                 
@@ -81,7 +82,7 @@ class Classification:
     
     def classify(self):
         
-        sim = MonteCarloSimulation(self.project, 10000)
+        sim = MonteCarloSimulation(self.project, 1000)
         sim.execute_simulation(self.filename)
 
         self.addClassifications(self.gate)
@@ -142,18 +143,10 @@ class Classification:
         # Evaluation
         accuracy = accuracy_score(self.y_test, predictedLabels)
 
-        # Calculate precision
-        precision = precision_score(self.y_test, predictedLabels, average='weighted')
-
-        # Calculate recall
-        recall = recall_score(self.y_test, predictedLabels, average='weighted')
-
-        # Calculate F1 score
-        f1 = f1_score(self.y_test, predictedLabels, average='weighted')
-        return accuracy, precision, recall, f1
+        return accuracy, predictedLabels
 
 
-    def logistical_regression(self):
+    def logistical_classifier(self):
         # Train the Decision Tree Classifier
         model = LogisticRegression(max_iter=1000)
         model.fit(self.X_train, self.y_train)
@@ -164,15 +157,7 @@ class Classification:
         # Evaluation
         accuracy = accuracy_score(self.y_test, predictedLabels)
 
-        # Calculate precision
-        precision = precision_score(self.y_test, predictedLabels, average='weighted')
-
-        # Calculate recall
-        recall = recall_score(self.y_test, predictedLabels, average='weighted')
-
-        # Calculate F1 score
-        f1 = f1_score(self.y_test, predictedLabels, average='weighted')
-        return accuracy, precision, recall, f1
+        return accuracy, predictedLabels
 
     def svm(self):
         # Train the Decision Tree Classifier
@@ -184,40 +169,9 @@ class Classification:
 
         # Evaluation
         accuracy = accuracy_score(self.y_test, predictedLabels)
-
-        # Calculate precision
-        precision = precision_score(self.y_test, predictedLabels, average='weighted')
-
-        # Calculate recall
-        recall = recall_score(self.y_test, predictedLabels, average='weighted')
-
-        # Calculate F1 score
-        f1 = f1_score(self.y_test, predictedLabels, average='weighted')
-
-        # print(f"\n---------------------EVALUATION-----------------------------\n")
-
-        # print("Accuracy:", accuracy)
-        # print("Precision:", precision)
-        # print("Recall:", recall)
-        # print("F1 Score:", f1)
-        return accuracy, precision, recall, f1
+        return accuracy, predictedLabels
 
 
-    def evaluate_models(self):
-        models = [
-        ("Logistic Classification", self.logistical_regression),
-        ("Decision Tree", self.decision_tree),
-        ("Support Vector Machine", self.svm)]
-
-        print("\n---------------------EVALUATION-----------------------------\n")
-
-        for model_name, model_func in models:
-            accuracy, precision, recall, f1 = model_func()
-            print(f"{model_name}:")
-            print(f"Accuracy: {accuracy:.2f}")
-            print(f"Precision: {precision:.2f}")
-            print(f"Recall: {recall:.2f}")
-            print(f"F1 Score: {f1:.2f}\n")
 
 
     def predict_regression(self):
@@ -253,8 +207,7 @@ class Classification:
         predictedLabels = model.predict(self.X_test_r)
         # Evaluation
         accuracy = mean_squared_error(self.y_test_r, predictedLabels)
-        #print(f"MSE: {accuracy}")
-        return accuracy
+        return accuracy, predictedLabels
     
     def lr(self):
         # Train the Decision Tree Classifier
@@ -266,12 +219,11 @@ class Classification:
 
         # Evaluation
         accuracy = mean_squared_error(self.y_test_r, predictedLabels)
-        #print(f"MSE: {accuracy}")
-        return accuracy
+        return accuracy, predictedLabels
     
-    def NN(self):
+    def KN(self):
         # Train the Decision Tree Classifier
-        model = MLPClassifier()
+        model = KNeighborsRegressor()
         model.fit(self.X_train_r, self.y_train_r)
         
         # Predict labels for test instances
@@ -279,18 +231,50 @@ class Classification:
 
         # Evaluation
         accuracy = mean_squared_error(self.y_test_r, predictedLabels)
-        #print(f"MSE: {accuracy}")
-        return accuracy
+        return accuracy, predictedLabels
     
-    def evaluate_models_regression(self):
+    def evaluate_models_classifier(self):
         models = [
-        ("Logistic Regression", self.lr),
-        ("Neural Network", self.NN),
-        ("Support Vector Machine Regression", self.svr)]
+        ("Logistical Regression Classifier", self.logistical_classifier),
+        ("Decision Tree Classifier", self.decision_tree),
+        ("Support Vector Classifier", self.svm)]
 
         print("\n---------------------EVALUATION-----------------------------\n")
 
         for model_name, model_func in models:
-            accuracy = model_func()
-            print(f"{model_name}:")
-            print(f"MSE: {accuracy:.2f}")
+            accuracy, preds = model_func()
+            confusion = confusion_matrix(self.y_test, preds)
+            tn, fp, fn, tp = confusion.ravel()
+            print(f"{model_name}:\n")
+            print(f"Accuracy: {accuracy:.2f}")
+            print("\t\t   Predicted")
+            print("\t\tOn-Time\tDelayed")
+            print(f"Actual On-Time:\t{tp}\t{fn}")
+            print(f"Actual Delayed:\t{fp}\t{tn}\n")
+            print(f"------------------------------------------------------------")
+            
+    def evaluate_models_regression(self):
+        models = [
+        ("Logistical Regression", self.lr),
+        ("KNeighbors Regressor", self.KN),
+        ("Support Vector Regression", self.svr)]
+
+        print("\n---------------------EVALUATION-----------------------------\n")
+
+        for model_name, model_func in models:
+            mse, preds = model_func()
+            print(f"{model_name}:\n")
+            print(f"MSE: {mse:.2f}\n")
+            print(f"MAE: {mean_absolute_error(self.y_test_r, preds):.2f}\n")
+            print(f"------------------------------------------------------------")
+
+
+            # Plotting prediction difference
+            plt.figure()
+            plt.title(f"{model_name} - Prediction Difference")
+            plt.scatter(np.arange(len(self.y_test_r)), self.y_test_r - preds, label="Difference")
+            plt.axhline(y=0, color='r', linestyle='-', label="Zero Difference")
+            plt.xlabel("Data Point")
+            plt.ylabel("Difference")
+            plt.legend()
+            plt.show()
