@@ -74,7 +74,7 @@ class MonteCarloSimulation:
     
     def execute_simulation(self, csv_filename="simulation_results.csv"):
         
-         
+        project_durations = []
         with open(csv_filename, 'w', newline='') as csvfile:
             fieldnames = ['Sample', 'Total_Duration', 'Total_duration_at_mid_gate'] + [task.getName() for task in self.project.getTasks()]
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -97,6 +97,7 @@ class MonteCarloSimulation:
                     if task.getEndDate()<= mid_gate.getEndDate():
                         total_duration_mid_project+=task.getActualDuration()
                         
+                project_durations.append(total_duration)
 
                 writer.writerow({
                     'Sample': sample + 1,
@@ -106,7 +107,7 @@ class MonteCarloSimulation:
                 })
 
         # After saving data to CSV, calculate and display statistics and histogram
-        project_durations = list(task_durations.values())
+        
         
         durations_array = np.array(project_durations)
         mean = np.mean(durations_array)
@@ -116,19 +117,19 @@ class MonteCarloSimulation:
         median = np.percentile(durations_array, 50)
         quantile_90 = np.percentile(durations_array, 90)
 
-        print("Mean:", mean)
-        print("Standard_deviation:", standard_deviation)
-        print("Minimum value:", min_value)
-        print("Maximum value:", max_value)
-        print("Median:", median)
-        print("Quantile 90:", quantile_90)
+        print("Mean:", round(mean,2))
+        print("Standard_deviation:", round(standard_deviation,2))
+        print("Minimum value:", round(min_value,2))
+        print("Maximum value:", round(max_value,2))
+        print("Median:", round(median,2))
+        print("Quantile 90:", round(quantile_90,2))
         
-        '''plt.hist(durations_array, bins=30, edgecolor='black')
+        plt.hist(durations_array, bins=30, edgecolor='black')
         plt.title('Histogram of Project Durations')
         plt.xlabel('Duration')
         plt.ylabel('Frequency')
         plt.grid(True)
-        plt.show()''' #This is commented out as the code wont stop running when we have this.
+        plt.show()
 
       
 
